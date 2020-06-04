@@ -1,0 +1,19 @@
+.gitignore
+*/.gitignore      # ignore files in sub directories
+*/.gitkeep
+.gitattributes
+.git-ftp-ignore
+.git-ftp-include
+.git
+.github
+.editorconfig
+
+*/tests
+tests
+.env.example
+composer.json
+package.json
+*.lock
+*.md
+phpunit.xml
+webpack.mix.js
