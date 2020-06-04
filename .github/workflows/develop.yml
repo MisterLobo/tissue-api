@@ -70,6 +70,7 @@ jobs:
       - name: Migrate data
         run: php artisan migrate
       - name: Export database to file
+        run: echo export database
       - name: Create htaccess file
         run: htpasswd -cb .htpasswd ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
       - name: Print contents
