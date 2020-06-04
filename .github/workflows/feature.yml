@@ -14,20 +14,82 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x]
+        php-versions: ['7.3']
 
+    env:
+      extensions: bcmath, ctype, fileinfo, intl, json, mbstring, openssl, pdo, tokenizer, xml
+      key: cache-v1 # can be any string, change to clear the extension cache.
+      ftphost: "ftp://ftpupload.net/dev.tissue.ml/htdocs"
+      ftpuser: epiz_25927316
+      ftppass: ${{ secrets.FTP_PASS }}
+      ftproot: dev.tissue.tk
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup cache environment
+        id: cache-env
+        uses: shivammathur/cache-extensions@v1
         with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm i -g yarn
-      - run: npm i -g @quasar/cli
-      - run: yarn
-      - run: quasar build
-      - run: rm -rf public
-      - run: cp -r dist/spa public
-      - run: ls -al
-      - run: pwd
-      - run: echo build successful!
+          php-version: ${{ matrix.php-versions }}
+          extensions: ${{ env.extensions }}
+          key: ${{ env.key }}
+
+      - name: Cache extensions
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.cache-env.outputs.dir }}
+          key: ${{ steps.cache-env.outputs.key }}
+          restore-keys: ${{ steps.cache-env.outputs.key }}
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: ${{ env.extensions }}
+          ini-values: post_max_size=256M, short_open_tag=On
+          coverage: xdebug
+          tools: php-cs-fixer, phpunit
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache dependencies
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist
+      - name: create env
+        run: cp .env.example .env
+      - name: Generate encryption key
+        run: php artisan key:generate
+      - name: Export database to file
+        run: echo export database
+      - run: sudo apt-get update
+      - run: sudo apt-get install apache2-utils
+      - name: Create htaccess file
+        run: htpasswd -cb .htpasswd ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
+      - name: Download math result for job 2
+        uses: actions/download-artifact@v1
+        with:
+          name: vendor
+      - name: Print contents
+        run: ls -al
+      - name: Print current working dir
+        run: pwd
+      - name: Copy public directory
+        run: cp -r public htdocs
+      - uses: actions/checkout@v2.1.0
+        with:
+          fetch-depth: 2
+      - uses: actions/checkout@v1
+      - name: git-ftp push
+        uses: sebastianpopp/git-ftp-action@releases/v3
+        with:
+          url: ${{ env.ftphost }}
+          user: ${{ env.ftpuser }}
+          password: ${{ env.ftppass }}
+      - name: Print if workflow finished successfully
+        run: echo workflow successful!
