@@ -77,7 +77,7 @@ jobs:
       - name: Copy vendor folder
         run: cp -r vendor .vendor
       - name: Create vendor archive file
-        run: tar -cz vendor vendor.zip
+        run: tar -cz vendor.zip vendor
       - name: Print contents
         run: ls -al
       - name: Print current working dir
