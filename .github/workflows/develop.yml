@@ -21,7 +21,7 @@ jobs:
     env:
       extensions: bcmath, ctype, fileinfo, intl, json, mbstring, openssl, pdo, tokenizer, xml
       key: cache-v1 # can be any string, change to clear the extension cache.
-      ftphost: ftpupload.net
+      ftphost: ftp://ftpupload.net
       ftpuser: epiz_25927316
       ftppass: ${{ secrets.FTP_PASS }}
       ftproot: dev.tissue.tk
