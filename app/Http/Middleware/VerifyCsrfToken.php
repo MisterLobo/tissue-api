@@ -12,6 +12,6 @@ class VerifyCsrfToken extends BaseVerifier
      * @var array
      */
     protected $except = [
-        //
+        '/sociallogin/google','/sociallogin/facebook','/sociallogin/github','/sociallogin/twitter','/sociallogin/vkontakte'
     ];
 }
