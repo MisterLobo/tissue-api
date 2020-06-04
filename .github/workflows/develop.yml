@@ -63,6 +63,8 @@ jobs:
         run: ls -al
       - name: Print current working dir
         run: pwd
+      - name: Copy public directory
+        run: cp -r public htdocs
       - uses: actions/checkout@v2.1.0
         with:
           fetch-depth: 2
@@ -72,5 +74,6 @@ jobs:
           ftp-server: ${{ secrets.FTP_HOST }}
           ftp-username: ${{ secrets.FTP_USER }}
           ftp-password: ${{ secrets.FTP_PASS }}
+          local-dir: ${{ secrets.DEV_FTP_PATH }}
       - name: Print if workflow finished successfully
         run: echo workflow successful!
