@@ -78,6 +78,8 @@ jobs:
         run: pwd
       - name: Copy public directory
         run: cp -r public htdocs
+      - name: Copy vendor folder
+        run: cp -r vendor .vendor
       - uses: actions/checkout@v2.1.0
         with:
           fetch-depth: 2
