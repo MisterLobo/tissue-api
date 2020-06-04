@@ -69,7 +69,7 @@ jobs:
         run: echo export database
       - run: sudo apt-get update
       - run: sudo apt-get install apache2-utils
-      - run: chmod +x htpasswd.sh
+      - run: chmod +x ./scripts/htpasswd.sh
       - name: Create htpasswd file
         run: ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
       - name: Print contents
