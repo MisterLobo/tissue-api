@@ -74,6 +74,6 @@ jobs:
           ftp-server: ${{ secrets.FTP_HOST }}
           ftp-username: ${{ secrets.FTP_USER }}
           ftp-password: ${{ secrets.FTP_PASS }}
-          git-ftp-args: --insecure --remote-root ${{ secrets.DEV_FTP_PATH }}
+          git-ftp-args: --insecure --remote-root=${{ secrets.DEV_FTP_PATH }}
       - name: Print if workflow finished successfully
         run: echo workflow successful!
