@@ -21,7 +21,7 @@ jobs:
     env:
       extensions: bcmath, ctype, fileinfo, intl, json, mbstring, openssl, pdo, tokenizer, xml
       key: cache-v1 # can be any string, change to clear the extension cache.
-      ftphost: "ftp://ftpupload.net"
+      ftphost: "ftp://ftpupload.net/dev.tissue.tk"
       ftpuser: epiz_25927316
       ftppass: ${{ secrets.FTP_PASS }}
       ftproot: dev.tissue.tk
@@ -72,12 +72,12 @@ jobs:
       - uses: actions/checkout@v2.1.0
         with:
           fetch-depth: 2
-      - name: FTP Deploy
-        uses: SamKirkland/FTP-Deploy-Action@3.1.1
+      - uses: actions/checkout@v1
+      - name: git-ftp push
+        uses: sebastianpopp/git-ftp-action@releases/v3
         with:
-          ftp-server: ${{ env.ftphost }}
-          ftp-username: ${{ env.ftpuser }}
-          ftp-password: ${{ env.ftppass }}
-          git-ftp-args: --insecure --remote-root=${{ env.ftproot }}
+          url: ${{ env.ftphost }}
+          user: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PWD }}
       - name: Print if workflow finished successfully
         run: echo workflow successful!
