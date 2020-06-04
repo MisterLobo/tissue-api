@@ -9,7 +9,7 @@
 .editorconfig
 
 */tests
-tests
+./tests
 .env.example
 composer.json
 package.json
