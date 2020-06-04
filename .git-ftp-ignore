@@ -5,7 +5,7 @@
 .git-ftp-ignore
 .git-ftp-include
 .git
-.github
+/.github
 .editorconfig
 
 */tests
