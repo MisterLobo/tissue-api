@@ -71,10 +71,6 @@ jobs:
       - run: sudo apt-get install apache2-utils
       - name: Create htaccess file
         run: htpasswd -cb .htpasswd ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
-      - name: Download math result for job 2
-        uses: actions/download-artifact@v1
-        with:
-          name: vendor
       - name: Print contents
         run: ls -al
       - name: Print current working dir
