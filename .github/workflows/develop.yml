@@ -71,9 +71,8 @@ jobs:
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@3.1.1
         with:
-          ftp-server: ${{ secrets.FTP_HOST }}
+          ftp-server: ${{ secrets.FTP_HOST }}/${{ secrets.DEV_FTP_PATH }}
           ftp-username: ${{ secrets.FTP_USER }}
           ftp-password: ${{ secrets.FTP_PASS }}
-          local-dir: dev.tissue.ml
       - name: Print if workflow finished successfully
         run: echo workflow successful!
