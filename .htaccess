@@ -2,10 +2,10 @@
 #AuthName "Restricted Area"
 #AuthType Basic
 #require valid-user
-<IfModule mod_rewrite.c>
-    #<IfModule mod_negotiation.c>
-    #    Options -MultiViews -Indexes
-    #</IfModule>
+#<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews
+    </IfModule>
 
     RewriteEngine On
 
@@ -20,4 +20,4 @@
     Redirect 301 /vendor/ /
 
     RewriteRule ^ server.php [L]
-</IfModule>
+#</IfModule>
