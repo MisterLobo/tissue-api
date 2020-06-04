@@ -21,8 +21,8 @@ jobs:
     env:
       extensions: bcmath, ctype, fileinfo, intl, json, mbstring, openssl, pdo, tokenizer, xml
       key: cache-v1 # can be any string, change to clear the extension cache.
-      ftphost: "ftp://ftpupload.net"
-      ftpuser: epiz_25927316
+      ftphost: "ftp://ftpupload.net/dev.tissue.tk"
+      ftpuser: ${{ secrets.FTP_USER }}
       ftppass: ${{ secrets.FTP_PASS }}
       ftproot: dev.tissue.tk
     steps:
@@ -79,6 +79,5 @@ jobs:
           url: ${{ env.ftphost }}
           user: ${{ env.ftpuser }}
           password: ${{ env.ftppass }}
-          options: --remote-root=${{ env.ftproot }}
       - name: Print if workflow finished successfully
         run: echo workflow successful!
