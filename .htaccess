@@ -1,0 +1,23 @@
+#AuthUserFile
+#AuthName "Restricted Area"
+#AuthType Basic
+#require valid-user
+<IfModule mod_rewrite.c>
+    #<IfModule mod_negotiation.c>
+    #    Options -MultiViews -Indexes
+    #</IfModule>
+
+    RewriteEngine On
+
+    Redirect 301 /app/ /
+    Redirect 301 /bootstrap/ /
+    Redirect 301 /config/ /
+    Redirect 301 /database/ /
+    Redirect 301 /public/ /
+    Redirect 301 /resources/ /
+    Redirect 301 /routes/ /
+    Redirect 301 /storage/ /
+    Redirect 301 /vendor/ /
+
+    RewriteRule ^ server.php [L]
+</IfModule>
