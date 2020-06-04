@@ -67,8 +67,6 @@ jobs:
         run: cp .env.example .env
       - name: Generate encryption key
         run: php artisan key:generate
-      - name: Migrate data
-        run: php artisan migrate
       - name: Export database to file
         run: echo export database
       - name: Create htaccess file
