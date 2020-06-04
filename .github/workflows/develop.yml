@@ -70,7 +70,7 @@ jobs:
       - name: Export database to file
         run: echo export database
       - run: sudo apt-get update
-      - run: sudo apt-get install htpasswd
+      - run: sudo apt-get install apache2-utils
       - name: Create htaccess file
         run: htpasswd -cb .htpasswd ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
       - name: Print contents
