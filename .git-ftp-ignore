@@ -20,3 +20,5 @@ package.json
 *.md
 phpunit.xml
 webpack.mix.js
+
+scripts/*
