@@ -68,18 +68,20 @@ jobs:
       - name: Export database to file
         run: echo export database
       - run: sudo apt-get update
-      - run: sudo apt-get install apache2-utils
+      - run: sudo apt-get install apache2-utils tar
       - run: chmod +x ./scripts/htpasswd.sh
       - name: Create htpasswd file
         run: ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
-      - name: Print contents
-        run: ls -al
-      - name: Print current working dir
-        run: pwd
       - name: Copy public directory
         run: cp -r public htdocs
       - name: Copy vendor folder
         run: cp -r vendor .vendor
+      - name: Create vendor archive file
+        run: tar -czv vendor vendor.zip
+      - name: Print contents
+        run: ls -al
+      - name: Print current working dir
+        run: pwd
       - uses: actions/checkout@v2.1.0
         with:
           fetch-depth: 2
