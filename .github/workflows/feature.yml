@@ -86,6 +86,7 @@ jobs:
           url: ${{ env.ftphost }}
           user: ${{ env.ftpuser }}
           password: ${{ env.ftppass }}
+          options: -f
       - run: cd vendor
       - name: prep vendor files for upload
         run: git init
