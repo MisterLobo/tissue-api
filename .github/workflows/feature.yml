@@ -61,6 +61,7 @@ jobs:
 
       - name: Install dependencies
         run: composer install --prefer-dist
+      - run: touch .env
       - name: Generate encryption key
         run: php artisan key:generate
       - name: Export database to file
