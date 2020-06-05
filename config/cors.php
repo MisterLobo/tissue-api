@@ -19,9 +19,9 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*', '*.tissue.tk'],
+    'allowed_origins' => ['*', '*.tissue.tk', 'dev.tissue.tk', 'www.tissue.tk'],
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => ['*.tissue.tk', 'dev.tissue.tk', 'www.tissue.tk'],
 
     'allowed_headers' => ['*'],
 
