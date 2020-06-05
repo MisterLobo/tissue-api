@@ -82,7 +82,7 @@ jobs:
       - name: Generate encryption key
         run: php artisan key:generate
       - run: sed '$ a DB_CONNECTION=mysqldev' .env
-      - run: sed '$@a@GITHUB_ID='"${{ env.DEV_GITHUB_CLIENT_ID }}"'@' .env
+      - run: sed '$ a GITHUB_ID="${{ env.DEV_GITHUB_CLIENT_ID }}"' .env
       - run: cat .env
       - name: Export database to file
         run: echo export database
