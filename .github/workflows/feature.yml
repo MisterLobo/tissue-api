@@ -75,7 +75,6 @@ jobs:
           password: ${{ env.ftppass }}
       - run: git config --global user.email "algae1234567890@gmail.com"
       - run: git config --global user.name "misterlobo"
-      - run: git commit -m 'ci generated files'
       - run: chmod +x ./scripts/htpasswd.sh
       - name: Create htpasswd file
         run: ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
@@ -89,6 +88,7 @@ jobs:
         run: echo export database
       - run: git status
       - run: git add .
+      - run: git commit -m 'ci generated files'
       - name: Print contents
         run: ls -al
       - run: cd vendor
