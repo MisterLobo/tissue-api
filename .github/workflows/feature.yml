@@ -75,6 +75,8 @@ jobs:
         run: ls -al
       - name: Print current working dir
         run: pwd
+      - run: git config --global user.email "algae1234567890@gmail.com"
+      - run: git config --global user.name "misterlobo"
       - run: git status
       - run: git add .
       - run: git commit -m 'ci generated files'
