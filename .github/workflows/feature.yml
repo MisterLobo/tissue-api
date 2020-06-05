@@ -71,20 +71,18 @@ jobs:
       - run: chmod +x ./scripts/htpasswd.sh
       - name: Create htpasswd file
         run: ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
-      - name: Create vendor archive file
-        run: tar -czf vendor.tar.gz vendor/
       - name: Print contents
         run: ls -al
       - name: Print current working dir
         run: pwd
+      - run: git status
       - name: git-ftp push
         uses: sebastianpopp/git-ftp-action@releases/v3
         with:
           url: ${{ env.ftphost }}
           user: ${{ env.ftpuser }}
           password: ${{ env.ftppass }}
-      - run: cp -r vendor .vendor
-      - run: cd ./vendor
+      - run: cd vendor
       - name: prep vendor files for upload
         run: git init
       - run: git add .
