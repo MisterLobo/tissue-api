@@ -1,3 +1,5 @@
 vendor/
 !.vendor/
 !vendor.tar.gz
+.htaccess
+.htpasswd
