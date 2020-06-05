@@ -61,25 +61,12 @@ jobs:
 
       - name: Install dependencies
         run: composer install --prefer-dist
-      - run: touch .env
-      - name: Generate encryption key
-        run: php artisan key:generate
-      - name: Export database to file
-        run: echo export database
       - run: sudo apt-get update
       - run: sudo apt-get install apache2-utils tar
-      - run: chmod +x ./scripts/htpasswd.sh
-      - name: Create htpasswd file
-        run: ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
       - name: Print contents
         run: ls -al
       - name: Print current working dir
         run: pwd
-      - run: git config --global user.email "algae1234567890@gmail.com"
-      - run: git config --global user.name "misterlobo"
-      - run: git status
-      - run: git add .
-      - run: git commit -m 'ci generated files'
       - name: git-ftp push
         uses: sebastianpopp/git-ftp-action@releases/v3
         with:
@@ -87,6 +74,24 @@ jobs:
           user: ${{ env.ftpuser }}
           password: ${{ env.ftppass }}
           options: -f
+      - run: git config --global user.email "algae1234567890@gmail.com"
+      - run: git config --global user.name "misterlobo"
+      - run: git commit -m 'ci generated files'
+      - run: chmod +x ./scripts/htpasswd.sh
+      - name: Create htpasswd file
+        run: ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
+      - run: touch .env
+      - name: Generate encryption key
+        run: php artisan key:generate
+      - run: sed '$ a DB_CONNECTION=mysqldev' .env
+      - run: sed '$@a@GITHUB_ID='"${{ env.DEV_GITHUB_CLIENT_ID }}"'@' .env
+      - run: cat .env
+      - name: Export database to file
+        run: echo export database
+      - run: git status
+      - run: git add .
+      - name: Print contents
+        run: ls -al
       - run: cd vendor
       - name: prep vendor files for upload
         run: git init
@@ -99,20 +104,5 @@ jobs:
           user: ${{ env.ftpuser }}
           password: ${{ env.ftppass }}
       - run: cd ..
-      - run: mkdir untracked
-      - run: sed '$ a DB_CONNECTION=mysqldev' .env
-      - run: sed '$@a@GITHUB_ID='"${{ env.DEV_GITHUB_CLIENT_ID }}"'@' .env
-      - run: cat .env
-      - run: mv .env untracked
-      - run: cd untracked
-      - name: prep untracked files for upload
-        run: git init
-      - run: git commit -m 'prep untracked files for upload'
-      - name: git-ftp upload untracked
-        uses: sebastianpopp/git-ftp-action@releases/v3
-        with:
-          url: "ftp://ftpupload.net/dev.tissue.ml/htdocs"
-          user: ${{ env.ftpuser }}
-          password: ${{ env.ftppass }}
       - name: Print if workflow finished successfully
         run: echo workflow successful!
