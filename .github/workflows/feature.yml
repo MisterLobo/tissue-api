@@ -25,7 +25,7 @@ jobs:
       ftproot: dev.tissue.tk
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v1
       - name: Setup cache environment
         id: cache-env
         uses: shivammathur/cache-extensions@v1
@@ -91,7 +91,11 @@ jobs:
       - run: git commit -m 'ci generated files'
       - name: Print contents
         run: ls -al
+      - name: Delete git repo
+        run: rm -rf .git
       - run: cd vendor
+      - name: List contents
+        run: ls -al
       - name: prep vendor files for upload
         run: git init
       - run: git add .
