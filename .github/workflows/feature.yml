@@ -72,7 +72,7 @@ jobs:
       - run: sudo apt-get build-dep libcurl3
       - run: ls -al curl3-7.58.0/*
       - run: cd ./curl3-7.58.0/debian && sudo sed -i -e 's/dh_auto_configure ${CONFIGURE_ARGS}/dh_auto_configure ${CONFIGURE_ARGS} --with-libssh2/' rules
-      - run: cd .. && sudo dpkg-buildpackage && ls -al && cd ..
+      - run: cd ./curl3-7.58.0 && sudo dpkg-buildpackage && ls -al
       - run: ls -al
       - run: sudo dpkg -i curl_*.deb
       - run: sudo dpkg -i libcurl3_*.deb
