@@ -78,7 +78,7 @@ jobs:
       - run: mkdir artifacts
       # - run: chmod +x ./scripts/ctar.sh && ./scripts/ctar.sh curl3-7.58.0.tar.gz ./curl3-7.58.0/debian
       # - run: cp curl3-7.58.0.tar.gz artifacts/
-      - run: cp curl.txt
+      - run: cp curl.txt artifacts/
       - run: cp libcurl-openssl1.0-dev_7.58.0-2ubuntu2_amd64.deb artifacts/
       - run: cp libcurl3_7.58.0-2ubuntu2_amd64.deb artifacts/
       - run: cp libcurl3-dbgsym_7.58.0-2ubuntu2_amd64.ddeb artifacts/
