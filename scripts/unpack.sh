@@ -24,5 +24,5 @@ cd ..
 
 ls -al
 
-# rm vault.tar.gz
-# rm -rf vault/
+rm vault.tar.gz
+rm -rf vault/
