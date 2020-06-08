@@ -122,6 +122,7 @@ jobs:
       - run: git checkout ./scripts/xtar.sh
       - run: DEV_FTP_HOST=$(cat ftpenv)
       - run: cat ftpenv
+      - run: cp cienv .env
       - run: echo $DEV_FTP_HOST
       - run: git status
       #- name: git-ftp push
