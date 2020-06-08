@@ -19,7 +19,7 @@ jobs:
     env:
       extensions: bcmath, ctype, fileinfo, intl, json, mbstring, openssl, pdo, tokenizer, xml
       key: cache-v1 # can be any string, change to clear the extension cache.
-      ftphost: "ftp://ftpupload.net/dev.tissue.ml/htdocs"
+      ftphost: "sftp://156.67.222.127:65002/domains/tissueapp.xyz/public_html/api-dev"
       ftpuser: epiz_25927316
       ftppass: ${{ secrets.FTP_PASS }}
       ftproot: dev.tissue.tk
@@ -73,39 +73,50 @@ jobs:
           url: ${{ env.ftphost }}
           user: ${{ env.ftpuser }}
           password: ${{ env.ftppass }}
-      - run: git config --global user.email "algae1234567890@gmail.com"
-      - run: git config --global user.name "misterlobo"
+          options: --pubkey ${{ secrets.SSH_PUBLIC_KEY }} --key ${{ secrets.SSH_PRIVATE_KEY }}
+      - run: chmod +x ./scripts/xtar.sh
+      - run: ./scripts/xtar.sh env.tar.gz
       - run: chmod +x ./scripts/htpasswd.sh
-      - name: Create htpasswd file
-        run: ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
-      - run: touch .env
-      - name: Generate encryption key
-        run: php artisan key:generate
-      - run: sed '$ a DB_CONNECTION=mysqldev' .env
-      - run: sed '$ a GITHUB_ID="${{ env.DEV_GITHUB_CLIENT_ID }}"' .env
-      - run: cat .env
-      - name: Export database to file
-        run: echo export database
-      - run: git status
-      - run: git add .
-      - run: git commit -m 'ci generated files'
+      - run: ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
+      - run: chmod +x ./scripts/decrypt.sh
+      - run: ./scripts/decypt.sh ${{ secrets.FILE_GPG_SECRET }} cienv .env
+      - run: php artisan key:generate
+      - name: migrate to remote db
+        run: php artisan migrate:refresh --seed
+      - run: ./scripts/decrypt.sh ${{ secrets.DEV_GPG_SECRET }} devenv.gpg devenv
+      - run: cp devenv .env
+      - run: chmod +x ./scripts/db.sh
+      - run: ./scripts/db.sh mysqldev
+      - run: chmod +x ./scripts/ctar.sh
+      - run: ./scripts/ctar.sh vendor.tar.gz vendor
+      - run: ./scripts/ctar.sh scripts.tar.gz scripts
+      - name: copy file via ssh key
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "vendor.tar.gz,.env,.htpasswd,scripts.tar.gz"
+          target: ${{ secrets.DEV_FTP_PATH }}
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            whoami
+            pwd
+            cd ${{ secrets.DEV_FTP_PATH }}
+            chmod +x xtar.sh
+            ./xtar.sh vendor.tar.gz
+            php artisan -V
+            php artisan key:generate
       - name: Print contents
         run: ls -al
-      - name: Delete git repo
-        run: rm -rf .git
-      - run: cd vendor
-      - name: List contents
-        run: ls -al
-      - name: prep vendor files for upload
-        run: git init
-      - run: git add .
-      - run: git commit -m 'prep vendor files for upload'
-      - name: git-ftp upload vendor
-        uses: sebastianpopp/git-ftp-action@releases/v3
-        with:
-          url: "ftp://ftpupload.net/dev.tissue.ml/htdocs/vendor"
-          user: ${{ env.ftpuser }}
-          password: ${{ env.ftppass }}
-      - run: cd ..
       - name: Print if workflow finished successfully
         run: echo workflow successful!
