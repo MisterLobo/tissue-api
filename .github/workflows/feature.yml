@@ -131,6 +131,9 @@ jobs:
       #    user: u753715810
       #    password: ${{ env.ftppass }}
       #    options: --key id_rsa.key --pubkey id_rsa.pub
+      - uses: actions/checkout@v2.1.0
+        with:
+          fetch-depth: 2
       - name: FTP-Deploy-Action
         uses: SamKirkland/FTP-Deploy-Action@3.1.1
         with:
