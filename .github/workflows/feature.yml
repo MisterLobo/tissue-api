@@ -142,16 +142,16 @@ jobs:
       #    ftp-password: ${{ env.ftppass }}
       #    git-ftp-args: --insecure
       #    git-ftp-args: --key 'id_rsa.key' --pubkey 'id_rsa.pub'
-      - run: chmod +x ./scripts/xtar.sh
-      - run: ./scripts/xtar.sh env.tar.gz
+      #- run: chmod +x ./scripts/xtar.sh
+      #- run: ./scripts/xtar.sh env.tar.gz
       - run: chmod +x ./scripts/htpasswd.sh
       - run: ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
-      - run: chmod +x ./scripts/decrypt.sh
-      - run: ./scripts/decypt.sh ${{ secrets.FILE_GPG_SECRET }} cienv .env
+      #- run: chmod +x ./scripts/decrypt.sh
+      #- run: ./scripts/decypt.sh ${{ secrets.FILE_GPG_SECRET }} cienv .env
       - run: php artisan key:generate
       - name: migrate to remote db
         run: php artisan migrate:refresh --seed
-      - run: ./scripts/decrypt.sh ${{ secrets.DEV_GPG_SECRET }} devenv.gpg devenv
+      #- run: ./scripts/decrypt.sh ${{ secrets.DEV_GPG_SECRET }} devenv.gpg devenv
       - run: cp devenv .env
       - run: chmod +x ./scripts/db.sh
       - run: ./scripts/db.sh mysqldev
