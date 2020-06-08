@@ -72,11 +72,11 @@ jobs:
       - run: sudo apt-get build-dep libcurl3
       - run: ls -al curl3-7.58.0/*
       - run: cd ./curl3-7.58.0/debian && sudo sed -i -e 's/dh_auto_configure ${CONFIGURE_ARGS}/dh_auto_configure ${CONFIGURE_ARGS} --with-libssh2/' rules
-      - run: cd ./curl3-7.58.0 && sudo dpkg-buildpackage && ls -al
-      - run: ls -al
-      - run: sudo dpkg -i curl_*.deb
-      - run: sudo dpkg -i libcurl3_*.deb
-      - run: sudo dpkg -i libcurl3-gnutls_*.deb
+      - run: cd ./curl3-7.58.0 && sudo dpkg-buildpackage && ls -al *
+      - run: cd ./curl3-7.58.0/debian && ls -al
+      - run: cd ./curl3-7.58.0/debian && sudo dpkg -i curl_*.deb
+      - run: cd ./curl3-7.58.0/debian && sudo dpkg -i libcurl3_*.deb
+      - run: cd ./curl3-7.58.0/debian && sudo dpkg -i libcurl3-gnutls_*.deb
       - name: Print contents
         run: ls -al
       - name: Print current working dir
