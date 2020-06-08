@@ -26,14 +26,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: curl build artifacts
-          path: artifacts
-      - uses: actions/download-artifact@v2
-        with:
-          name: vendor
-          path: vendor
+      #- uses: actions/download-artifact@v2
+      #  with:
+      #    name: curl build artifacts
+      #    path: artifacts
+      #- uses: actions/download-artifact@v2
+      #  with:
+      #    name: vendor
+      #    path: vendor
       - name: Setup cache environment
         id: cache-env
         uses: shivammathur/cache-extensions@v1
