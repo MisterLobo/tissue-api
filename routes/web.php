@@ -19,3 +19,4 @@ Route::get('/', function () {
 
 Route::post('sociallogin/{provider}', '\App\Services\Api\Http\Controllers\AuthController@SocialSignup');
 Route::get('auth/{provider}/callback', '\App\Services\Api\Http\Controllers\OutController@index')->where('provider', '.*');
+Route::post('social/getuser/{provider}', '\App\Services\Api\Http\Controllers\AuthController@getUserFromSession');
