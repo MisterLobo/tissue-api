@@ -14,6 +14,9 @@ cd vault || exit
 
 ./decrypt.sh "$1" "$3".gpg ftpenv
 
+echo Show contents ..
+cat ftpenv
+
 cp devenv ../
 cp cienv ../
 cp ftpenv ../
