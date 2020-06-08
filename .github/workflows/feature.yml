@@ -70,10 +70,12 @@ jobs:
       - run: sudo apt-get install build-essential debhelper libssh-dev
       - run: sudo apt-get source libcurl3
       - run: sudo apt-get build-dep libcurl3
+      - run: ls -al
       - run: cd curl-*/debian
       - run: sed -i -e 's/dh_auto_configure ${CONFIGURE_ARGS}/dh_auto_configure ${CONFIGURE_ARGS} --with-libssh2/' rules
       - run: cd ..
       - run: sudo dpkg-buildpackage
+      - run: ls -al
       - run: cd ..
       - run: sudo dpkg -i curl_*.deb
       - run: sudo dpkg -i libcurl3_*.deb
