@@ -133,7 +133,10 @@ jobs:
       - run: git checkout ./scripts/xtar.sh
       - run: DEV_FTP_HOST=$(cat ftpenv)
       - run: cat ftpenv
-      - run: cp cienv .env
+      - run: mv cienv .env
+      - run: cat .env
+      - run: chmod +x ./scripts/db.sh
+      - run: ./scripts/db.sh mysqldev
       - run: echo $DEV_FTP_HOST
       - run: git status
       - run: chmod +x ./scripts/htpasswd.sh
@@ -157,8 +160,6 @@ jobs:
         run: php artisan migrate:refresh --seed
       #- run: ./scripts/decrypt.sh ${{ secrets.DEV_GPG_SECRET }} devenv.gpg devenv
       #- run: cp devenv .env
-      - run: chmod +x ./scripts/db.sh
-      - run: ./scripts/db.sh mysqldev
       - run: chmod +x ./scripts/ctar.sh
       - run: ./scripts/ctar.sh vendor.tar.gz vendor
       - run: ./scripts/ctar.sh scripts.tar.gz scripts
