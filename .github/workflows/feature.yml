@@ -81,7 +81,7 @@ jobs:
       - name: git-ftp push
         uses: sebastianpopp/git-ftp-action@releases/v3
         with:
-          url: $DEV_FTP_HOST
+          url: '156.67.222.127:65002/domains/tissueapp.xyz/public_html/api-dev'
           user: u753715810
           password: ${{ env.ftppass }}
           options: --key id_rsa.key --pubkey id_rsa.pub
