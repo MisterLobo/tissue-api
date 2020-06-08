@@ -12,7 +12,7 @@ cd vault || exit
 ./decrypt.sh "$1" "$2".gpg "$2"
 ./decrypt.sh "$1" cienv.gpg cienv
 
-./decrypt.sh "$1" "$3" ftpenv
+./decrypt.sh "$1" "$3".gpg ftpenv
 
 cp devenv ../
 cp cienv ../
