@@ -18,7 +18,11 @@ cp devenv ../
 cp cienv ../
 cp ftpenv ../
 
+ls -al
+
 cd ..
 
-rm vault.tar.gz
-rm -rf vault/
+ls -al
+
+# rm vault.tar.gz
+# rm -rf vault/
