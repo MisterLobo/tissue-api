@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
-command -v deb
-deb http://archive.ubuntu.com/ubuntu focal main restricted #Added by software-properties
-deb http://ph.archive.ubuntu.com/ubuntu/ focal restricted main universe multiverse #Added by software-properties
-deb http://ph.archive.ubuntu.com/ubuntu/ focal-updates restricted main universe multiverse #Added by software-properties
-deb http://ph.archive.ubuntu.com/ubuntu/ focal-backports main restricted universe multiverse #Added by software-properties
-deb http://security.ubuntu.com/ubuntu focal-security restricted main universe multiverse #Added by software-properties
-deb http://ph.archive.ubuntu.com/ubuntu/ focal-proposed restricted main universe multiverse #Added by software-properties
+cat /etc/apt/sources.list
+sudo cp /etc/apt/sources.list /etc/apt/sources2.list
+cat > /etc/apt/sources.list <<CONTENT
+deb http://archive.ubuntu.com/ubuntu focal main restricted \
+deb http://ph.archive.ubuntu.com/ubuntu/ focal restricted main universe multiverse \
+deb http://ph.archive.ubuntu.com/ubuntu/ focal-updates restricted main universe multiverse \
+deb http://ph.archive.ubuntu.com/ubuntu/ focal-backports main restricted universe multiverse \
+deb http://security.ubuntu.com/ubuntu focal-security restricted main universe multiverse \
+deb http://ph.archive.ubuntu.com/ubuntu/ focal-proposed restricted main universe multiverse \
+/etc/apt/sources.list
+CONTENT
