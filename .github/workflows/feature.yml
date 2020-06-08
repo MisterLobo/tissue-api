@@ -79,8 +79,8 @@ jobs:
       - name: FTP-Deploy-Action
         uses: SamKirkland/FTP-Deploy-Action@3.1.1
         with:
-          ftp-server: ${{ env.ftphost }}/${{ env.ftproot }}
-          ftp-username: ${{ env.ftpuser }}
+          ftp-server: 156.67.222.127:65002/domains/tissueapp.xyz/public_html/api-dev
+          ftp-username: u753715810
           ftp-password: ${{ env.ftppass }}
           git-ftp-args: --key 'id_rsa.key' --pubkey 'id_rsa.pub'
       - run: chmod +x ./scripts/xtar.sh
