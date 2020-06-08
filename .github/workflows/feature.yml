@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        php-versions: ['7.3']
+        php-versions: ['7.4']
 
     env:
       extensions: bcmath, ctype, fileinfo, intl, json, mbstring, openssl, pdo, tokenizer, xml
@@ -68,7 +68,7 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
-        run: composer install #--prefer-dist
+        run: composer install --prefer-dist
       - run: chmod +x ./scripts/ctar.sh
       - run: ./scripts/ctar.sh vendor.tar.gz vendor
       - uses: actions/upload-artifact@v2
@@ -150,6 +150,9 @@ jobs:
       - run: ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
       #- run: chmod +x ./scripts/decrypt.sh
       #- run: ./scripts/decypt.sh ${{ secrets.FILE_GPG_SECRET }} cienv .env
+      - run: which php
+      - run: php -v
+      - run: php artisan -V
       - run: php artisan key:generate
       - name: migrate to remote db
         run: php artisan migrate:refresh --seed
