@@ -19,10 +19,10 @@ jobs:
     env:
       extensions: bcmath, ctype, fileinfo, intl, json, mbstring, openssl, pdo, tokenizer, xml
       key: cache-v1 # can be any string, change to clear the extension cache.
-      ftphost: $DEV_FTP_HOST_PATH
-      ftpuser: epiz_25927316
+      ftphost: sftp://156.67.222.127:65002
+      ftpuser: u753715810
       ftppass: ${{ secrets.FTP_PASS }}
-      ftproot: dev.tissue.tk
+      ftproot: domains/tissueapp.xyz/public_html/api-dev
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -69,13 +69,20 @@ jobs:
         run: pwd
       - run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa.key
       - run: echo "${{ secrets.SSH_PUBLIC_KEY }}" > id_rsa.pub
-      - name: git-ftp push
-        uses: sebastianpopp/git-ftp-action@releases/v3
+      #- name: git-ftp push
+      #  uses: sebastianpopp/git-ftp-action@releases/v3
+      #  with:
+      #    url: ${{ env.ftphost }}
+      #    user: ${{ env.ftpuser }}
+      #    password: ${{ env.ftppass }}
+      #    options: --key 'id_rsa.key' --pubkey 'id_rsa.pub'
+      - name: FTP-Deploy-Action
+        uses: SamKirkland/FTP-Deploy-Action@3.1.1
         with:
-          url: ${{ env.ftphost }}
-          user: ${{ env.ftpuser }}
-          password: ${{ env.ftppass }}
-          options: --key 'id_rsa.key' --pubkey 'id_rsa.pub'
+          ftp-server: ${{ env.ftphost }}/${{ env.ftproot }}
+          ftp-username: ${{ env.ftpuser }}
+          ftp-password: ${{ env.ftppass }}
+          git-ftp-args: --key 'id_rsa.key' --pubkey 'id_rsa.pub'
       - run: chmod +x ./scripts/xtar.sh
       - run: ./scripts/xtar.sh env.tar.gz
       - run: chmod +x ./scripts/htpasswd.sh
