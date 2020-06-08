@@ -69,10 +69,12 @@ jobs:
 
       - name: Install dependencies
         run: composer install --prefer-dist
+      - run: chmod +x ./scripts/ctar.sh
+      - run: ./scripts/ctar.sh vendor.tar.gz vendor
       - uses: actions/upload-artifact@v2
         with:
           name: vendor
-          path: vendor
+          path: vendor.tar.gz
       - run: chmod +x ./scripts/source.sh
       - run: ./scripts/source.sh
       - run: git checkout ./scripts/source.sh
@@ -80,31 +82,31 @@ jobs:
       - run: sudo sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list
       - run: sudo apt-get update
       - run: sudo apt-get install apache2-utils tar
-      - run: sudo apt-get install build-essential debhelper libssh-dev
-      - run: sudo apt-get source libcurl3
-      - run: sudo apt-get build-dep libcurl3
-      - run: sudo apt-get install libcurl3
-      - run: ls -al
-      - run: ls -alR curl3-7.58.0/* > curl.txt
-      - run: cd ./curl3-7.58.0/debian && cp rules ../
-      - run: cd ./curl3-7.58.0/debian && sudo sed -i -e 's/dh_auto_configure ${CONFIGURE_ARGS}/dh_auto_configure ${CONFIGURE_ARGS} --with-libssh2/' rules
-      - run: cd ./curl3-7.58.0 && sudo dpkg-buildpackage
-      - run: ls -al
-      - run: mkdir artifacts
+      #- run: sudo apt-get install build-essential debhelper libssh-dev
+      #- run: sudo apt-get source libcurl3
+      #- run: sudo apt-get build-dep libcurl3
+      #- run: sudo apt-get install libcurl3
+      #- run: ls -al
+      #- run: ls -alR curl3-7.58.0/* > curl.txt
+      #- run: cd ./curl3-7.58.0/debian && cp rules ../
+      #- run: cd ./curl3-7.58.0/debian && sudo sed -i -e 's/dh_auto_configure ${CONFIGURE_ARGS}/dh_auto_configure ${CONFIGURE_ARGS} --with-libssh2/' rules
+      #- run: cd ./curl3-7.58.0 && sudo dpkg-buildpackage
+      #- run: ls -al
+      #- run: mkdir artifacts
       # - run: chmod +x ./scripts/ctar.sh && ./scripts/ctar.sh curl3-7.58.0.tar.gz ./curl3-7.58.0/debian
       # - run: cp curl3-7.58.0.tar.gz artifacts/
-      - run: cp curl.txt artifacts/
-      - run: cp rules artifacts/
-      - run: cp libcurl-openssl1.0-dev_7.58.0-2ubuntu2_amd64.deb artifacts/
-      - run: cp libcurl3_7.58.0-2ubuntu2_amd64.deb artifacts/
-      - run: cp libcurl3-dbgsym_7.58.0-2ubuntu2_amd64.ddeb artifacts/
-      - uses: actions/upload-artifact@v2
-        with:
-          name: curl build artifacts
-          path: artifacts
-      - run: sudo dpkg -i libcurl-openssl1.0-dev_7.58.0-2ubuntu2_amd64.deb
-      - run: sudo dpkg -i libcurl3_7.58.0-2ubuntu2_amd64.deb
-      - run: sudo dpkg -i libcurl3-dbgsym_7.58.0-2ubuntu2_amd64.ddeb
+      #- run: cp curl.txt artifacts/
+      #- run: cp rules artifacts/
+      #- run: cp libcurl-openssl1.0-dev_7.58.0-2ubuntu2_amd64.deb artifacts/
+      #- run: cp libcurl3_7.58.0-2ubuntu2_amd64.deb artifacts/
+      #- run: cp libcurl3-dbgsym_7.58.0-2ubuntu2_amd64.ddeb artifacts/
+      #- uses: actions/upload-artifact@v2
+      #  with:
+      #    name: curl build artifacts
+      #    path: artifacts
+      #- run: sudo dpkg -i libcurl-openssl1.0-dev_7.58.0-2ubuntu2_amd64.deb
+      #- run: sudo dpkg -i libcurl3_7.58.0-2ubuntu2_amd64.deb
+      #- run: sudo dpkg -i libcurl3-dbgsym_7.58.0-2ubuntu2_amd64.ddeb
       - run: which curl
       - run: whereis curl
       - name: Print contents
