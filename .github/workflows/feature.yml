@@ -98,24 +98,6 @@ jobs:
       #- run: sudo dpkg -i libcurl-openssl1.0-dev_7.58.0-2ubuntu2_amd64.deb
       #- run: sudo dpkg -i libcurl3_7.58.0-2ubuntu2_amd64.deb
       #- run: sudo dpkg -i libcurl3-dbgsym_7.58.0-2ubuntu2_amd64.ddeb
-      - run: which curl
-      - run: whereis curl
-      - name: Print contents
-        run: ls -al
-      - name: Print current working dir
-        run: pwd
-      - run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa.key
-      - run: echo "${{ secrets.SSH_PUBLIC_KEY }}" > id_rsa.pub
-      - run: chmod +x ./scripts/unpack.sh
-      - run: ./scripts/unpack.sh ${{ secrets.FILE_GPG_SECRET }} devenv ciftpenv_dev
-      - run: git checkout ./scripts/decrypt.sh
-      - run: git checkout ./scripts/unpack.sh
-      - run: git checkout ./scripts/xtar.sh
-      - run: DEV_FTP_HOST=$(cat ftpenv)
-      - run: cat ftpenv
-      - run: cp cienv .env
-      - run: echo $DEV_FTP_HOST
-      - run: git status
       #- name: git-ftp push
       #  uses: sebastianpopp/git-ftp-action@releases/v3
       #  with:
@@ -136,6 +118,24 @@ jobs:
       #    git-ftp-args: --key 'id_rsa.key' --pubkey 'id_rsa.pub'
       #- run: chmod +x ./scripts/xtar.sh
       #- run: ./scripts/xtar.sh env.tar.gz
+      - run: which curl
+      - run: whereis curl
+      - name: Print contents
+        run: ls -al
+      - name: Print current working dir
+        run: pwd
+      - run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa.key
+      - run: echo "${{ secrets.SSH_PUBLIC_KEY }}" > id_rsa.pub
+      - run: chmod +x ./scripts/unpack.sh
+      - run: ./scripts/unpack.sh ${{ secrets.FILE_GPG_SECRET }} devenv ciftpenv_dev
+      - run: git checkout ./scripts/decrypt.sh
+      - run: git checkout ./scripts/unpack.sh
+      - run: git checkout ./scripts/xtar.sh
+      - run: DEV_FTP_HOST=$(cat ftpenv)
+      - run: cat ftpenv
+      - run: cp cienv .env
+      - run: echo $DEV_FTP_HOST
+      - run: git status
       - run: chmod +x ./scripts/htpasswd.sh
       - run: ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
       #- run: chmod +x ./scripts/decrypt.sh
