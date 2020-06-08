@@ -111,6 +111,7 @@ jobs:
       - run: whereis curl
       - name: Print contents
         run: ls -al
+      - run: ls -al vendor
       - name: Print current working dir
         run: pwd
       - run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa.key
@@ -153,7 +154,7 @@ jobs:
       - name: migrate to remote db
         run: php artisan migrate:refresh --seed
       #- run: ./scripts/decrypt.sh ${{ secrets.DEV_GPG_SECRET }} devenv.gpg devenv
-      - run: cp devenv .env
+      #- run: cp devenv .env
       - run: chmod +x ./scripts/db.sh
       - run: ./scripts/db.sh mysqldev
       - run: chmod +x ./scripts/ctar.sh
