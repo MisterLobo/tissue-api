@@ -29,4 +29,5 @@ cd ..
 ./scripts/ctar.sh vault.tar.gz vault/
 ./scripts/encrypt.sh "$1" vault.tar.gz
 
+rm vault.tar.gz
 rm -rf vault/
