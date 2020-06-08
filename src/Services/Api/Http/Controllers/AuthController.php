@@ -27,6 +27,14 @@ class AuthController extends Controller
         return response()->json($user);
     }
 
+    public function getUserFromSession(Request $request, $provider)
+    {
+        $token = $request->input('token');
+        $user = Socialite::driver($provider)->userFromToken($token);
+
+        return response()->json($user);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
