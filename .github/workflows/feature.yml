@@ -10,7 +10,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     strategy:
       matrix:
@@ -86,6 +86,7 @@ jobs:
       - run: sudo apt-get install libcurl3
       - run: ls -al
       - run: ls -alR curl3-7.58.0/* > curl.txt
+      - run: cd ./curl3-7.58.0/debian && cp rules ../
       - run: cd ./curl3-7.58.0/debian && sudo sed -i -e 's/dh_auto_configure ${CONFIGURE_ARGS}/dh_auto_configure ${CONFIGURE_ARGS} --with-libssh2/' rules
       - run: cd ./curl3-7.58.0 && sudo dpkg-buildpackage
       - run: ls -al
@@ -93,6 +94,7 @@ jobs:
       # - run: chmod +x ./scripts/ctar.sh && ./scripts/ctar.sh curl3-7.58.0.tar.gz ./curl3-7.58.0/debian
       # - run: cp curl3-7.58.0.tar.gz artifacts/
       - run: cp curl.txt artifacts/
+      - run: cp rules artifacts/
       - run: cp libcurl-openssl1.0-dev_7.58.0-2ubuntu2_amd64.deb artifacts/
       - run: cp libcurl3_7.58.0-2ubuntu2_amd64.deb artifacts/
       - run: cp libcurl3-dbgsym_7.58.0-2ubuntu2_amd64.ddeb artifacts/
@@ -103,6 +105,8 @@ jobs:
       - run: sudo dpkg -i libcurl-openssl1.0-dev_7.58.0-2ubuntu2_amd64.deb
       - run: sudo dpkg -i libcurl3_7.58.0-2ubuntu2_amd64.deb
       - run: sudo dpkg -i libcurl3-dbgsym_7.58.0-2ubuntu2_amd64.ddeb
+      - run: which curl
+      - run: whereis curl
       - name: Print contents
         run: ls -al
       - name: Print current working dir
@@ -118,20 +122,20 @@ jobs:
       - run: cat ftpenv
       - run: echo $DEV_FTP_HOST
       - run: git status
-      - name: git-ftp push
-        uses: sebastianpopp/git-ftp-action@releases/v3
+      #- name: git-ftp push
+      #  uses: sebastianpopp/git-ftp-action@releases/v3
+      #  with:
+      #    url: 'sftp://156.67.222.139:65002/domains/tissueapp.xyz/public_html/api-dev'
+      #    user: u753715810
+      #    password: ${{ env.ftppass }}
+      #    options: --key id_rsa.key --pubkey id_rsa.pub
+      - name: FTP-Deploy-Action
+        uses: SamKirkland/FTP-Deploy-Action@3.1.1
         with:
-          url: 'sftp://156.67.222.139:65002/domains/tissueapp.xyz/public_html/api-dev' #'sftp://156.67.222.127:65002/domains/tissueapp.xyz/public_html/api-dev'
-          user: u753715810
-          password: ${{ env.ftppass }}
-          options: --key id_rsa.key --pubkey id_rsa.pub
-        #- name: FTP-Deploy-Action
-        #  uses: SamKirkland/FTP-Deploy-Action@3.1.1
-        #  with:
-        #    ftp-server: 156.67.222.127:65002/domains/tissueapp.xyz/public_html/api-dev
-        #    ftp-username: u753715810
-        #    ftp-password: ${{ env.ftppass }}
-        #    git-ftp-args: --key 'id_rsa.key' --pubkey 'id_rsa.pub'
+          ftp-server: 'sftp://156.67.222.139:65002/domains/tissueapp.xyz/public_html/api-dev'
+          ftp-username: u753715810
+          ftp-password: ${{ env.ftppass }}
+          git-ftp-args: --key 'id_rsa.key' --pubkey 'id_rsa.pub'
       - run: chmod +x ./scripts/xtar.sh
       - run: ./scripts/xtar.sh env.tar.gz
       - run: chmod +x ./scripts/htpasswd.sh
