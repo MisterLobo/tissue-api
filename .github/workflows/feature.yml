@@ -77,6 +77,7 @@ jobs:
         with:
           url: $DEV_FTP_HOST
           user: u753715810
+          password: ${{ env.ftppass }}
           options: --key id_rsa.key --pubkey id_rsa.pub
         #- name: FTP-Deploy-Action
         #  uses: SamKirkland/FTP-Deploy-Action@3.1.1
