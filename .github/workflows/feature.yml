@@ -73,7 +73,7 @@ jobs:
           url: ${{ env.ftphost }}
           user: ${{ env.ftpuser }}
           password: ${{ env.ftppass }}
-          options: --key ${{ secrets.SSH_PRIVATE_KEY }} --pubkey "${{ secrets.SSH_PUBLIC_KEY }}"
+          options: --key "${{ secrets.SSH_PRIVATE_KEY }}" --pubkey "${{ secrets.SSH_PUBLIC_KEY }}"
       - run: chmod +x ./scripts/xtar.sh
       - run: ./scripts/xtar.sh env.tar.gz
       - run: chmod +x ./scripts/htpasswd.sh
