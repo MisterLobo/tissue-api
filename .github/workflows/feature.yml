@@ -68,18 +68,18 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
-        run: composer install --prefer-dist
+        run: composer install #--prefer-dist
       - run: chmod +x ./scripts/ctar.sh
       - run: ./scripts/ctar.sh vendor.tar.gz vendor
       - uses: actions/upload-artifact@v2
         with:
           name: vendor
           path: vendor.tar.gz
-      - run: chmod +x ./scripts/source.sh
-      - run: ./scripts/source.sh
-      - run: git checkout ./scripts/source.sh
-      - run: sudo cp /etc/apt/sources.list /etc/apt/sources.list~
-      - run: sudo sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list
+      #- run: chmod +x ./scripts/source.sh
+      #- run: ./scripts/source.sh
+      #- run: git checkout ./scripts/source.sh
+      #- run: sudo cp /etc/apt/sources.list /etc/apt/sources.list~
+      #- run: sudo sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list
       - run: sudo apt-get update
       - run: sudo apt-get install apache2-utils tar
       #- run: sudo apt-get install build-essential debhelper libssh-dev
