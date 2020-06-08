@@ -70,9 +70,19 @@ jobs:
       - run: sudo apt-get install build-essential debhelper libssh-dev
       - run: sudo apt-get source libcurl3
       - run: sudo apt-get build-dep libcurl3
-      - run: ls -al curl3-7.58.0/*
+      - run: ls -al
+      - run: ls -alR curl3-7.58.0/* > curl.txt
       - run: cd ./curl3-7.58.0/debian && sudo sed -i -e 's/dh_auto_configure ${CONFIGURE_ARGS}/dh_auto_configure ${CONFIGURE_ARGS} --with-libssh2/' rules
       - run: cd ./curl3-7.58.0 && sudo dpkg-buildpackage && ls -al *
+      - run: ls -al
+      - run: mkdir artifacts
+      - run: chmod +x ./scripts/ctar.sh && ./scripts/ctar.sh curl3-7.58.0.tar.gz curl3-7.58.0
+      - run: cp curl3-7.58.0.tar.gz artifacts/
+      - run: cp curl.txt
+      - uses: actions/upload-artifact@v2
+        with:
+          name: curl build artifacts
+          path: artifacts
       - run: cd ./curl3-7.58.0/debian && ls -al
       - run: cd ./curl3-7.58.0/debian && sudo dpkg -i curl_*.deb
       - run: cd ./curl3-7.58.0/debian && sudo dpkg -i libcurl3_*.deb
