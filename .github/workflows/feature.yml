@@ -65,7 +65,7 @@ jobs:
       - run: ./scripts/source.sh
       - run: sudo apt-get update
       - run: sudo apt-get install apache2-utils tar curl
-      - run: sudo apt-get install build-essential debhelper libssh2-1-dev
+      - run: sudo apt-get install build-essential debhelper libssh-dev
       - run: sudo apt-get source libcurl3
       - run: sudo apt-get build-dep libcurl3
       - run: cd curl-*/debian
