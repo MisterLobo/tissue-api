@@ -63,6 +63,17 @@ jobs:
         run: composer install --prefer-dist
       - run: sudo apt-get update
       - run: sudo apt-get install apache2-utils tar curl
+      - run: sudo apt-get install build-essential debhelper libssh2-1-dev
+      - run: sudo apt-get source libcurl3
+      - run: sudo apt-get build-dep libcurl3
+      - run: cd curl-*/debian
+      - run: sed -i -e 's/dh_auto_configure ${CONFIGURE_ARGS}/dh_auto_configure ${CONFIGURE_ARGS} --with-libssh2/' rules
+      - run: cd ..
+      - run: sudo dpkg-buildpackage
+      - run: cd ..
+      - run: sudo dpkg -i curl_*.deb
+      - run: sudo dpkg -i libcurl3_*.deb
+      - run: sudo dpkg -i libcurl3-gnutls_*.deb
       - name: Print contents
         run: ls -al
       - name: Print current working dir
