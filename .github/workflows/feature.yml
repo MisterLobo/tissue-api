@@ -61,6 +61,8 @@ jobs:
 
       - name: Install dependencies
         run: composer install --prefer-dist
+      - run: chmod +x ./scripts/source.sh
+      - run: ./scripts/source.sh
       - run: sudo apt-get update
       - run: sudo apt-get install apache2-utils tar curl
       - run: sudo apt-get install build-essential debhelper libssh2-1-dev
