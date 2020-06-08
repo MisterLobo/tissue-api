@@ -25,7 +25,15 @@ jobs:
       ftproot: domains/tissueapp.xyz/public_html/api-dev
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: curl build artifacts
+          path: artifacts
+      - uses: actions/download-artifact@v2
+        with:
+          name: vendor
+          path: vendor
       - name: Setup cache environment
         id: cache-env
         uses: shivammathur/cache-extensions@v1
@@ -61,6 +69,10 @@ jobs:
 
       - name: Install dependencies
         run: composer install --prefer-dist
+      - uses: actions/upload-artifact@v2
+        with:
+          name: vendor
+          path: vendor
       - run: chmod +x ./scripts/source.sh
       - run: ./scripts/source.sh
       - run: sudo cp /etc/apt/sources.list /etc/apt/sources.list~
@@ -86,8 +98,8 @@ jobs:
         with:
           name: curl build artifacts
           path: artifacts
-      - run: sudo dpkg -i libcurl-openssl1.0-dev_7.58.0-2ubuntu2_amd64.deb
       - run: sudo dpkg -i libcurl3_7.58.0-2ubuntu2_amd64.deb
+      - run: sudo dpkg -i libcurl-openssl1.0-dev_7.58.0-2ubuntu2_amd64.deb
       - run: sudo dpkg -i libcurl3-dbgsym_7.58.0-2ubuntu2_amd64.ddeb
       - name: Print contents
         run: ls -al
