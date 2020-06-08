@@ -62,7 +62,7 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist
       - run: sudo apt-get update
-      - run: sudo apt-get install apache2-utils tar
+      - run: sudo apt-get install apache2-utils tar curl
       - name: Print contents
         run: ls -al
       - name: Print current working dir
@@ -81,7 +81,7 @@ jobs:
       - name: git-ftp push
         uses: sebastianpopp/git-ftp-action@releases/v3
         with:
-          url: 'sftp://156.67.222.127:65002/domains/tissueapp.xyz/public_html/api-dev'
+          url: 'sftp://156.67.222.139:65002/domains/tissueapp.xyz/public_html/api-dev' #'sftp://156.67.222.127:65002/domains/tissueapp.xyz/public_html/api-dev'
           user: u753715810
           password: ${{ env.ftppass }}
           options: --key id_rsa.key --pubkey id_rsa.pub
