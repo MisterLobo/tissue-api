@@ -189,13 +189,13 @@ jobs:
             pwd
             echo Print Directory
             ls -al
-            cd ${{ secrets.DEV_FTP_PATH }} && chmod +x ./scripts/xtar.sh
-            cd ${{ secrets.DEV_FTP_PATH }} && ./scripts/xtar.sh vendor.tar.gz && echo Print Directory && ls -al
+            chmod +x ./scripts/xtar.sh
+            ./scripts/xtar.sh vendor.tar.gz && echo Print Directory && ls -al
             echo Print Directory
             pwd
             ls -al
-            cd ${{ secrets.DEV_FTP_PATH }} && php artisan -V
-            cd ${{ secrets.DEV_FTP_PATH }} && php artisan key:generate
+            php artisan -V
+            php artisan key:generate
       - name: Print contents
         run: ls -al
       - name: Print if workflow finished successfully
