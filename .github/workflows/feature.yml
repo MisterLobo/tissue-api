@@ -26,14 +26,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      #- uses: actions/download-artifact@v2
-      #  with:
-      #    name: curl build artifacts
-      #    path: artifacts
-      #- uses: actions/download-artifact@v2
-      #  with:
-      #    name: vendor
-      #    path: vendor
       - name: Setup cache environment
         id: cache-env
         uses: shivammathur/cache-extensions@v1
@@ -66,11 +58,6 @@ jobs:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
-      #- run: chmod +x ./scripts/source.sh
-      #- run: ./scripts/source.sh
-      #- run: git checkout ./scripts/source.sh
-      #- run: sudo cp /etc/apt/sources.list /etc/apt/sources.list~
-      #- run: sudo sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list
       - run: sudo apt-get update
       - run: sudo apt-get install apache2-utils tar
       - uses: actions/checkout@v2.1.0
@@ -105,50 +92,52 @@ jobs:
         with:
           name: vendor
           path: vendor.tar.gz
-      - run: ls -al vendor
+      #- run: ls -al vendor
       - run: which php
       - run: php -v
       - run: php artisan -V
       - run: php artisan key:generate
-      - run: cat .env
-      - name: migrate to remote db
-        run: php artisan migrate:refresh --seed
-      - run: chmod +x ./scripts/ctar.sh
-      - run: ./scripts/ctar.sh vendor.tar.gz vendor
-      - name: copy file via ssh key
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
-          port: ${{ secrets.SSH_PORT }}
-          source: "app,bootstrap,config,public,resources,routes,src,storage,scripts,vendor.tar.gz,devenv,.htaccess,.htpasswd,artisan,server.php"
-          target: ${{ secrets.DEV_FTP_PATH }}
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            whoami
-            pwd
-            cd ${{ secrets.DEV_FTP_PATH }}
-            pwd
-            echo Print Directory
-            ls -al
-            chmod +x ./scripts/xtar.sh
-            ./scripts/xtar.sh vendor.tar.gz
-            chmod +x ./scripts/htpasswd.sh
-            ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
-            mv devenv .env
-            ls -al
-            php artisan -V
-            php artisan key:generate
-            cat .env
+      - name: Run Tests
+        run: ./vendor/bin/phpunit
+      #- run: cat .env
+      #- name: migrate to remote db
+      #  run: php artisan migrate:refresh --seed
+      #- run: chmod +x ./scripts/ctar.sh
+      #- run: ./scripts/ctar.sh vendor.tar.gz vendor
+      #- name: copy file via ssh key
+      #  uses: appleboy/scp-action@master
+      #  with:
+      #    host: ${{ secrets.SSH_HOST }}
+      #    username: ${{ secrets.SSH_USERNAME }}
+      #    key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #    passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
+      #    port: ${{ secrets.SSH_PORT }}
+      #    source: "app,bootstrap,config,public,resources,routes,src,storage,scripts,vendor.tar.gz,devenv,.htaccess,.htpasswd,artisan,server.php"
+      #    target: ${{ secrets.DEV_FTP_PATH }}
+      #- name: executing remote ssh commands using password
+      #  uses: appleboy/ssh-action@master
+      #  with:
+      #    host: ${{ secrets.SSH_HOST }}
+      #    username: ${{ secrets.SSH_USERNAME }}
+      #    key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #    passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
+      #    port: ${{ secrets.SSH_PORT }}
+      #    script: |
+      #      whoami
+      #      pwd
+      #      cd ${{ secrets.DEV_FTP_PATH }}
+      #      pwd
+      #      echo Print Directory
+      #      ls -al
+      #      chmod +x ./scripts/xtar.sh
+      #      ./scripts/xtar.sh vendor.tar.gz
+      #      chmod +x ./scripts/htpasswd.sh
+      #      ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
+      #      mv devenv .env
+      #      ls -al
+      #      php artisan -V
+      #      php artisan key:generate
+      #      cat .env
       - name: Print contents
         run: ls -al
       - name: Print if workflow finished successfully
