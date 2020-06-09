@@ -196,7 +196,7 @@ jobs:
             ls -al
             php artisan -V
             php artisan key:generate
-            php artisan config:cache
+            cat .env
       - name: Print contents
         run: ls -al
       - name: Print if workflow finished successfully
