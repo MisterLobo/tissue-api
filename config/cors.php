@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => ['*', 'https://dev.tissueapp.xyz', 'https://demo.tissueapp.xyz', 'https://www.tissueapp.xyz'],
 
     'allowed_origins_patterns' => ['*'],
 
