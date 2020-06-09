@@ -2,7 +2,11 @@
 #AuthName "Restricted Area"
 #AuthType Basic
 #require valid-user
-#<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP_HOST} (www\.)?api-dev.tissueapp.xyz
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+<IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews
     </IfModule>
@@ -20,4 +24,4 @@
     Redirect 301 /vendor/ /
 
     RewriteRule ^ server.php [L]
-#</IfModule>
+</IfModule>
