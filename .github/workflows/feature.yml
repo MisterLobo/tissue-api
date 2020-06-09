@@ -108,13 +108,13 @@ jobs:
       - uses: actions/checkout@v2.1.0
         with:
           fetch-depth: 2
-      #- name: FTP-Deploy-Action
-      #  uses: SamKirkland/FTP-Deploy-Action@3.1.1
-      #  with:
-      #    ftp-server: sftp://156.67.222.139:65002/domains/tissueapp.xyz/public_html/api-dev
-      #    ftp-username: u753715810
-      #    ftp-password: ${{ env.ftppass }}
-      #    git-ftp-args: --insecure
+      - name: FTP-Deploy-Action
+        uses: SamKirkland/FTP-Deploy-Action@3.1.1
+        with:
+          ftp-server: sftp://156.67.222.139:65002
+          ftp-username: u753715810
+          ftp-password: ${{ env.ftppass }}
+          git-ftp-args: --insecure --remote-root ${{ secrets.DEV_FTP_PATH }} #domains/tissueapp.xyz/public_html/api-dev
       #    git-ftp-args: --key 'id_rsa.key' --pubkey 'id_rsa.pub'
       #- run: chmod +x ./scripts/xtar.sh
       #- run: ./scripts/xtar.sh env.tar.gz
@@ -171,7 +171,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
           port: ${{ secrets.SSH_PORT }}
-          source: "app,bootstrap,config,public,resources,routes,src,storage,scripts,vendor.tar.gz,devenv,.htaccess,.htpasswd,artisan,server.php"
+          source: "vendor.tar.gz,devenv,.htaccess,.htpasswd"
+          # source: "app,bootstrap,config,public,resources,routes,src,storage,scripts,vendor.tar.gz,devenv,.htaccess,.htpasswd,artisan,server.php"
           target: ${{ secrets.DEV_FTP_PATH }}
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
