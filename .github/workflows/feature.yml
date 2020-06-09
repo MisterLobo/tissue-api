@@ -185,9 +185,7 @@ jobs:
           script: |
             whoami
             pwd
-            cd ${{ secrets.DEV_FTP_PATH }}
-            chmod +x xtar.sh
-            ./xtar.sh vendor.tar.gz
+            cd ${{ secrets.DEV_FTP_PATH }} && chmod +x xtar.sh && ./xtar.sh vendor.tar.gz
             php artisan -V
             php artisan key:generate
       - name: Print contents
