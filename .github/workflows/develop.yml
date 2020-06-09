@@ -75,9 +75,6 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
       - run: sudo apt-get update
       - run: sudo apt-get install apache2-utils tar
-      - uses: actions/checkout@v2.1.0
-        with:
-          fetch-depth: 2
       - run: which curl
       - run: whereis curl
       - run: composer install --prefer-dist
