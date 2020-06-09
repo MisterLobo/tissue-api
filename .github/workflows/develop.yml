@@ -169,7 +169,7 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v2
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
+          path: ${{ jobs.install.steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
       - run: composer install --prefer-dist
@@ -190,7 +190,7 @@ jobs:
       - run: mv cienv .env
       #- run: cat .env
       - run: chmod +x ./scripts/db.sh
-      - run: ./scripts/db.sh mysqlci
+      - run: ./scripts/db.sh mysqldev
       - uses: mirromutth/mysql-action@v1.1
         with:
           host port: ${{ env.dbhost }} # Optional, default value is 3306. The port of host
@@ -206,7 +206,7 @@ jobs:
       - run: php artisan -V
       - run: php artisan key:generate
       #- run: cat .env
-      - name: migrate to local db
+      - name: migrate to remote db
         run: php artisan migrate:refresh --seed
       - name: Cache vendor
         uses: actions/cache@v2
@@ -226,17 +226,12 @@ jobs:
           path: vendor
           key: ${{ runner.os }}-vendor-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-vendor-
-      - run: composer install --prefer-dist
-      - uses: mirromutth/mysql-action@v1.1
-        with:
-          host port: 3800 # Optional, default value is 3306. The port of host
-          #character set server: 'utf8' # Optional, default value is 'utf8mb4'. The '--character-set-server' option for mysqld
-          #collation server: 'utf8_general_ci' # Optional, default value is 'utf8mb4_general_ci'. The '--collation-server' option for mysqld
-          #mysql version: '8.0' # Optional, default value is "latest". The version of the MySQL
-          #mysql database: 'tissueappdb' # Optional, default value is "test". The specified database which will be create
-          mysql root password: 'root' # Required if "mysql user" is empty, default is empty. The root superuser password
-          mysql user: 'root' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
-          mysql password: 'root' # Required if "mysql user" exists. The password for the "mysql user"
+      - run: chmod +x ./scripts/unpack.sh
+      - run: ./scripts/unpack.sh ${{ secrets.FILE_GPG_SECRET }} devenv ciftpenv_dev
+      - run: DEV_FTP_HOST=$(cat ftpenv)
+      #- run: cat ftpenv
+      - run: mv cienv .env
+      - run: ./scripts/db.sh mysqlci workflow
       - run: which php
       - run: php -v
       - run: php artisan -V
