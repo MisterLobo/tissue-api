@@ -1,2 +1,5 @@
-!vendor/
-!.env
+vendor/
+!.vendor/
+!vendor.tar.gz
+.htaccess
+.htpasswd

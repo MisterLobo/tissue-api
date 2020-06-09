@@ -2,10 +2,14 @@
 #AuthName "Restricted Area"
 #AuthType Basic
 #require valid-user
+RewriteEngine on
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP_HOST} (www\.)?api-dev.tissueapp.xyz
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 <IfModule mod_rewrite.c>
-    #<IfModule mod_negotiation.c>
-    #    Options -MultiViews -Indexes
-    #</IfModule>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews
+    </IfModule>
 
     RewriteEngine On
 

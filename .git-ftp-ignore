@@ -6,8 +6,10 @@
 .git-ftp-include
 .git
 /.github
+.github/*
 .editorconfig
 
+htpasswd.sh
 tests/*
 */tests
 ./tests
@@ -18,3 +20,6 @@ package.json
 *.md
 phpunit.xml
 webpack.mix.js
+
+scripts/*
+*.gpg

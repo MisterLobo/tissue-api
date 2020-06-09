@@ -10,24 +10,135 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     strategy:
       matrix:
-        node-version: [14.x]
+        php-versions: ['7.4']
 
+    env:
+      extensions: bcmath, ctype, fileinfo, intl, json, mbstring, openssl, pdo, tokenizer, xml
+      key: cache-v1 # can be any string, change to clear the extension cache.
+      ftphost: sftp://156.67.222.127:65002
+      ftpuser: u753715810
+      ftppass: ${{ secrets.FTP_PASS }}
+      ftproot: domains/tissueapp.xyz/public_html/api-dev
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup cache environment
+        id: cache-env
+        uses: shivammathur/cache-extensions@v1
         with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm i -g yarn
-      - run: npm i -g @quasar/cli
-      - run: yarn
-      - run: quasar build
-      - run: rm -rf public
-      - run: cp -r dist/spa public
-      - run: ls -al
-      - run: pwd
-      - run: echo build successful!
+          php-version: ${{ matrix.php-versions }}
+          extensions: ${{ env.extensions }}
+          key: ${{ env.key }}
+
+      - name: Cache extensions
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.cache-env.outputs.dir }}
+          key: ${{ steps.cache-env.outputs.key }}
+          restore-keys: ${{ steps.cache-env.outputs.key }}
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: ${{ env.extensions }}
+          ini-values: post_max_size=256M, short_open_tag=On
+          coverage: xdebug
+          tools: php-cs-fixer, phpunit, pecl
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache dependencies
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - run: sudo apt-get update
+      - run: sudo apt-get install apache2-utils tar
+      - uses: actions/checkout@v2.1.0
+        with:
+          fetch-depth: 2
+      - run: which curl
+      - run: whereis curl
+      - name: Print contents
+        run: ls -al
+      - name: Print current working dir
+        run: pwd
+      - run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa.key
+      - run: echo "${{ secrets.SSH_PUBLIC_KEY }}" > id_rsa.pub
+      - run: chmod +x ./scripts/unpack.sh
+      - run: ./scripts/unpack.sh ${{ secrets.FILE_GPG_SECRET }} devenv ciftpenv_dev
+      - run: git checkout ./scripts/decrypt.sh
+      - run: git checkout ./scripts/unpack.sh
+      - run: git checkout ./scripts/xtar.sh
+      - run: DEV_FTP_HOST=$(cat ftpenv)
+      - run: cat ftpenv
+      - run: mv cienv .env
+      - run: cat .env
+      - run: chmod +x ./scripts/db.sh
+      - run: ./scripts/db.sh mysqldev
+      - run: echo $DEV_FTP_HOST
+      - run: git status
+      - name: Install dependencies
+        run: composer install --prefer-dist
+      - run: chmod +x ./scripts/ctar.sh
+      - run: ./scripts/ctar.sh vendor.tar.gz vendor
+      - uses: actions/upload-artifact@v2
+        with:
+          name: vendor
+          path: vendor.tar.gz
+      #- run: ls -al vendor
+      - run: which php
+      - run: php -v
+      - run: php artisan -V
+      - run: php artisan key:generate
+      - name: Run Tests
+        run: ./vendor/bin/phpunit
+      #- run: cat .env
+      #- name: migrate to remote db
+      #  run: php artisan migrate:refresh --seed
+      #- run: chmod +x ./scripts/ctar.sh
+      #- run: ./scripts/ctar.sh vendor.tar.gz vendor
+      #- name: copy file via ssh key
+      #  uses: appleboy/scp-action@master
+      #  with:
+      #    host: ${{ secrets.SSH_HOST }}
+      #    username: ${{ secrets.SSH_USERNAME }}
+      #    key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #    passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
+      #    port: ${{ secrets.SSH_PORT }}
+      #    source: "app,bootstrap,config,public,resources,routes,src,storage,scripts,vendor.tar.gz,devenv,.htaccess,.htpasswd,artisan,server.php"
+      #    target: ${{ secrets.DEV_FTP_PATH }}
+      #- name: executing remote ssh commands using password
+      #  uses: appleboy/ssh-action@master
+      #  with:
+      #    host: ${{ secrets.SSH_HOST }}
+      #    username: ${{ secrets.SSH_USERNAME }}
+      #    key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #    passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
+      #    port: ${{ secrets.SSH_PORT }}
+      #    script: |
+      #      whoami
+      #      pwd
+      #      cd ${{ secrets.DEV_FTP_PATH }}
+      #      pwd
+      #      echo Print Directory
+      #      ls -al
+      #      chmod +x ./scripts/xtar.sh
+      #      ./scripts/xtar.sh vendor.tar.gz
+      #      chmod +x ./scripts/htpasswd.sh
+      #      ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
+      #      mv devenv .env
+      #      ls -al
+      #      php artisan -V
+      #      php artisan key:generate
+      #      cat .env
+      - name: Print contents
+        run: ls -al
+      - name: Print if workflow finished successfully
+        run: echo workflow successful!
