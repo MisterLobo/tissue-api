@@ -245,8 +245,7 @@ jobs:
       #- run: cat ftpenv
       - run: mv cienv .env
       - run: cat .env
-      - run: chmod +x ./scripts/db.sh
-      - run: ./scripts/db.sh mysqlci workflow
+      - run: chmod +x ./scripts/db.sh && ./scripts/db.sh mysqlci workflow
       - run: which php
       - run: php -v
       - run: php artisan -V

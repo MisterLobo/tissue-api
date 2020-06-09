@@ -75,6 +75,13 @@ jobs:
           fetch-depth: 2
       - run: which curl
       - run: whereis curl
+      - run: composer install --prefer-dist
+      - name: Cache vendor
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-vendor-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-vendor-
       #- name: Print contents
       #  run: ls -al
       #- name: Print current working dir
@@ -161,7 +168,13 @@ jobs:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
-      - run: composer install --prefer-dist
+      #- run: composer install --prefer-dist
+      - name: Get vendor cache
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-vendor-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-vendor-
       - run: echo Setup local environment
       - name: Print contents
         run: ls -al
@@ -187,19 +200,19 @@ jobs:
       #- run: cat .env
       - name: migrate to local db
         run: php artisan migrate:refresh --seed
-      - name: Cache vendor
-        uses: actions/cache@v2
-        with:
-          path: vendor
-          key: ${{ runner.os }}-vendor-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-vendor-
+      #- name: Cache vendor
+      #  uses: actions/cache@v2
+      #  with:
+      #    path: vendor
+      #    key: ${{ runner.os }}-vendor-${{ hashFiles('**/composer.lock') }}
+      #    restore-keys: ${{ runner.os }}-vendor-
   unit-test:
     runs-on: ubuntu-latest
     needs: [ setup-local-environment ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Cache dependencies
+      - name: Get vendor cache
         uses: actions/cache@v2
         with:
           path: vendor
@@ -210,7 +223,7 @@ jobs:
       - run: DEV_FTP_HOST=$(cat ftpenv)
       #- run: cat ftpenv
       - run: mv cienv .env
-      - run: ./scripts/db.sh mysqlci workflow
+      - run: chmod +x ./scripts/db.sh && ./scripts/db.sh mysqlci workflow
       - run: which php
       - run: php -v
       - run: php artisan -V
