@@ -111,7 +111,7 @@ jobs:
       - name: FTP-Deploy-Action
         uses: SamKirkland/FTP-Deploy-Action@3.1.1
         with:
-          ftp-server: sftp://156.67.222.139:65002/domains/tissueapp.xyz/public_html/api-dev/
+          ftp-server: sftp://156.67.222.139:65002/a/
           ftp-username: u753715810
           ftp-password: ${{ env.ftppass }}
           git-ftp-args: --insecure #--remote-root ${{ secrets.DEV_FTP_PATH }} #domains/tissueapp.xyz/public_html/api-dev
