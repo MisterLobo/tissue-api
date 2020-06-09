@@ -98,11 +98,11 @@ return [
 
         'mysqlci' => [
             'driver' => 'mysql',
-            'host' => env('DB_HOST', 'sql208.epizy.com'),
+            'host' => env('DB_HOST', 'localhost'),
             'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'epiz_25927316_dev'),
-            'username' => env('DB_USERNAME', 'epiz_25927316'),
-            'password' => env('DB_PASSWORD', 'AvUXlc4a4qaehMH'),
+            'database' => env('DB_DATABASE', 'tissueappdb'),
+            'username' => env('DB_USERNAME', 'root'),
+            'password' => env('DB_PASSWORD', 'root'),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
