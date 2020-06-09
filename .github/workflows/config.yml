@@ -177,13 +177,13 @@ jobs:
       - run: ./scripts/ctar.sh vendor.tar.gz vendor
   unit-test:
     runs-on: ubuntu-latest
-    needs: [ setup ]
+    needs: [ setup-local-environment ]
     steps:
       - name: Run Unit Tests
         run: ./vendor/bin/phpunit
   init-deploy:
     runs-on: ubuntu-latest
-    needs: [ test ]
+    needs: [ unit-test ]
     steps:
       - name: Pre Deployment Scripts
         run: ls -al
