@@ -177,13 +177,15 @@ jobs:
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SSH_HOST }}/${{ secrets.DEV_FTP_PATH }}
+          host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
           port: ${{ secrets.SSH_PORT }}
           script: |
             whoami
+            pwd
+            cd ${{ secrets.DEV_FTP_PATH }}
             pwd
             echo Print Directory
             ls -al
