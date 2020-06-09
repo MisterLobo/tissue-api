@@ -73,51 +73,9 @@ jobs:
       #- run: sudo sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list
       - run: sudo apt-get update
       - run: sudo apt-get install apache2-utils tar
-      #- run: sudo apt-get install build-essential debhelper libssh-dev
-      #- run: sudo apt-get source libcurl3
-      #- run: sudo apt-get build-dep libcurl3
-      #- run: sudo apt-get install libcurl3
-      #- run: ls -al
-      #- run: ls -alR curl3-7.58.0/* > curl.txt
-      #- run: cd ./curl3-7.58.0/debian && cp rules ../
-      #- run: cd ./curl3-7.58.0/debian && sudo sed -i -e 's/dh_auto_configure ${CONFIGURE_ARGS}/dh_auto_configure ${CONFIGURE_ARGS} --with-libssh2/' rules
-      #- run: cd ./curl3-7.58.0 && sudo dpkg-buildpackage
-      #- run: ls -al
-      #- run: mkdir artifacts
-      # - run: chmod +x ./scripts/ctar.sh && ./scripts/ctar.sh curl3-7.58.0.tar.gz ./curl3-7.58.0/debian
-      # - run: cp curl3-7.58.0.tar.gz artifacts/
-      #- run: cp curl.txt artifacts/
-      #- run: cp rules artifacts/
-      #- run: cp libcurl-openssl1.0-dev_7.58.0-2ubuntu2_amd64.deb artifacts/
-      #- run: cp libcurl3_7.58.0-2ubuntu2_amd64.deb artifacts/
-      #- run: cp libcurl3-dbgsym_7.58.0-2ubuntu2_amd64.ddeb artifacts/
-      #- uses: actions/upload-artifact@v2
-      #  with:
-      #    name: curl build artifacts
-      #    path: artifacts
-      #- run: sudo dpkg -i libcurl-openssl1.0-dev_7.58.0-2ubuntu2_amd64.deb
-      #- run: sudo dpkg -i libcurl3_7.58.0-2ubuntu2_amd64.deb
-      #- run: sudo dpkg -i libcurl3-dbgsym_7.58.0-2ubuntu2_amd64.ddeb
-      #- name: git-ftp push
-      #  uses: sebastianpopp/git-ftp-action@releases/v3
-      #  with:
-      #    url: 'sftp://156.67.222.139:65002/domains/tissueapp.xyz/public_html/api-dev'
-      #    user: u753715810
-      #    password: ${{ env.ftppass }}
-      #    options: --key id_rsa.key --pubkey id_rsa.pub
       - uses: actions/checkout@v2.1.0
         with:
           fetch-depth: 2
-      - name: FTP-Deploy-Action
-        uses: SamKirkland/FTP-Deploy-Action@3.1.1
-        with:
-          ftp-server: sftp://156.67.222.139:65002/a/
-          ftp-username: u753715810
-          ftp-password: ${{ env.ftppass }}
-          git-ftp-args: --insecure #--remote-root ${{ secrets.DEV_FTP_PATH }} #domains/tissueapp.xyz/public_html/api-dev
-      #    git-ftp-args: --key 'id_rsa.key' --pubkey 'id_rsa.pub'
-      #- run: chmod +x ./scripts/xtar.sh
-      #- run: ./scripts/xtar.sh env.tar.gz
       - run: which curl
       - run: whereis curl
       - name: Print contents
@@ -139,10 +97,6 @@ jobs:
       - run: ./scripts/db.sh mysqldev
       - run: echo $DEV_FTP_HOST
       - run: git status
-      #- run: chmod +x ./scripts/htpasswd.sh
-      #- run: ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
-      #- run: chmod +x ./scripts/decrypt.sh
-      #- run: ./scripts/decypt.sh ${{ secrets.FILE_GPG_SECRET }} cienv .env
       - name: Install dependencies
         run: composer install --prefer-dist
       - run: chmod +x ./scripts/ctar.sh
@@ -159,8 +113,6 @@ jobs:
       - run: cat .env
       - name: migrate to remote db
         run: php artisan migrate:refresh --seed
-      #- run: ./scripts/decrypt.sh ${{ secrets.DEV_GPG_SECRET }} devenv.gpg devenv
-      #- run: cp devenv .env
       - run: chmod +x ./scripts/ctar.sh
       - run: ./scripts/ctar.sh vendor.tar.gz vendor
       - name: copy file via ssh key
@@ -171,8 +123,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
           port: ${{ secrets.SSH_PORT }}
-          source: "vendor.tar.gz,devenv,.htaccess,.htpasswd"
-          # source: "app,bootstrap,config,public,resources,routes,src,storage,scripts,vendor.tar.gz,devenv,.htaccess,.htpasswd,artisan,server.php"
+          source: "app,bootstrap,config,public,resources,routes,src,storage,scripts,vendor.tar.gz,devenv,.htaccess,.htpasswd,artisan,server.php"
           target: ${{ secrets.DEV_FTP_PATH }}
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
