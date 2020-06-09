@@ -6,7 +6,7 @@ name: Development CI/CD
 on:
   push:
     branches: [ 'config/**' ]
-  paths-ignore:
+    paths-ignore:
     - 'app/**'
     - 'config/**'
     - 'database/**'

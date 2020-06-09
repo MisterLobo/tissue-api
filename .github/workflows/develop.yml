@@ -6,20 +6,20 @@ name: Development CI/CD
 on:
   push:
     branches: [ develop ]
-  paths:
-    - 'app/**'
-    - 'config/**'
-    - 'database/**'
-    - 'public/**'
-    - 'resources/**'
-    - 'routes/**'
-    - 'src/**'
-    - 'storage/**'
-    - 'tests/**'
-  paths-ignore:
-    - '.github/**'
-    - 'scripts/**'
-    - 'etc/**'
+    paths:
+      - 'app/**'
+      - 'config/**'
+      - 'database/**'
+      - 'public/**'
+      - 'resources/**'
+      - 'routes/**'
+      - 'src/**'
+      - 'storage/**'
+      - 'tests/**'
+    paths-ignore:
+      - '.github/**'
+      - 'scripts/**'
+      - 'etc/**'
   #pull_request:
   #  branches: [ develop ]
 
