@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-tar -C ./ -xzvf "$1"
+tar -C ./ -xzf "$1"

@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-tar -czvf "$1" "$2"
+tar -czf "$1" "$2"
