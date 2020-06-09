@@ -2,4 +2,4 @@
 
 CONN=$1
 
-sed '1s/=/='"$CONN" .env
+sed -i -e '1s/=/='"$CONN"'/' .env
