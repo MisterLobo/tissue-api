@@ -111,10 +111,10 @@ jobs:
       - name: FTP-Deploy-Action
         uses: SamKirkland/FTP-Deploy-Action@3.1.1
         with:
-          #ftp-server: sftp://156.67.222.139:65002/
+          ftp-server: sftp://156.67.222.139:65002/
           ftp-username: u753715810
           ftp-password: ${{ env.ftppass }}
-          git-ftp-args: --insecure --dry-run #--remote-root ${{ secrets.DEV_FTP_PATH }} #domains/tissueapp.xyz/public_html/api-dev
+          git-ftp-args: --insecure #--remote-root ${{ secrets.DEV_FTP_PATH }} #domains/tissueapp.xyz/public_html/api-dev
       #    git-ftp-args: --key 'id_rsa.key' --pubkey 'id_rsa.pub'
       #- run: chmod +x ./scripts/xtar.sh
       #- run: ./scripts/xtar.sh env.tar.gz
