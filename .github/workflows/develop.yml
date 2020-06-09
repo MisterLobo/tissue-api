@@ -16,10 +16,9 @@ on:
       - 'src/**'
       - 'storage/**'
       - 'tests/**'
-    paths-ignore:
-      - '.github/**'
-      - 'scripts/**'
-      - 'etc/**'
+      - !'.github/**'
+      - !'scripts/**'
+      - !'etc/**'
   #pull_request:
   #  branches: [ develop ]
 
