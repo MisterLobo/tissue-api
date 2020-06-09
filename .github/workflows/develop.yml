@@ -16,9 +16,9 @@ on:
       - 'src/**'
       - 'storage/**'
       - 'tests/**'
-      - !'.github/**'
-      - !'scripts/**'
-      - !'etc/**'
+      - '!.github/**'
+      - '!scripts/**'
+      - '!etc/**'
   #pull_request:
   #  branches: [ develop ]
 
