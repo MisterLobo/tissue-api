@@ -1,7 +1,7 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Development CI/CD
+name: Development Workflow
 
 on:
   push:
@@ -25,7 +25,7 @@ on:
 jobs:
   install:
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
@@ -301,7 +301,7 @@ jobs:
       - run: echo Deployment done!
   setup-remote-environment:
     runs-on: ubuntu-latest
-    needs: [ init-deploy ]
+    needs: [ post-deploy ]
     steps:
       - name: Setup Remote Environment After Deployment
         uses: appleboy/ssh-action@master
@@ -325,3 +325,5 @@ jobs:
             ls -al
             php artisan -V
             php artisan key:generate
+            rm -rf scripts
+            rm scripts.tar.gz vendor.tar.gz

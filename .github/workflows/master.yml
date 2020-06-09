@@ -1,7 +1,7 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Development CI/CD
+name: Production Workflow
 
 on:
   push:
@@ -11,9 +11,9 @@ on:
       - v*-hotfix
 
 jobs:
-  build:
+  install:
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
@@ -56,7 +56,7 @@ jobs:
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
       - name: Cache dependencies
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -68,6 +68,47 @@ jobs:
           fetch-depth: 2
       - run: which curl
       - run: whereis curl
+      - run: composer install --prefer-dist
+      - name: Cache vendor
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-vendor-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-vendor-
+      - name: Print contents
+        run: ls -al
+      - run: echo Job finished!
+  setup-local-environment:
+    runs-on: ubuntu-latest
+    needs: [ install ]
+    env:
+      dbhost: 'localhost'
+      dbname: 'tissueci_db'
+      dbport: 3800
+      dbuser: 'root'
+      dbpassword: 'root'
+    steps:
+      - run: sudo apt-get update
+      - run: sudo apt-get install apache2-utils tar
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - name: Get dependencies cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ jobs.install.steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      #- run: composer install --prefer-dist
+      - name: Get vendor cache
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-vendor-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-vendor-
+      - run: echo Setup local environment
       - name: Print contents
         run: ls -al
       - name: Print current working dir
@@ -75,37 +116,87 @@ jobs:
       - run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa.key
       - run: echo "${{ secrets.SSH_PUBLIC_KEY }}" > id_rsa.pub
       - run: chmod +x ./scripts/unpack.sh
-      - run: ./scripts/unpack.sh ${{ secrets.FILE_GPG_SECRET }} devenv ciftpenv_dev
+      - run: ./scripts/unpack.sh ${{ secrets.FILE_GPG_SECRET }} env ciftpenv
       - run: git checkout ./scripts/decrypt.sh
       - run: git checkout ./scripts/unpack.sh
       - run: git checkout ./scripts/xtar.sh
-      - run: DEV_FTP_HOST=$(cat ftpenv)
-      - run: cat ftpenv
+      - run: PROD_FTP_HOST=$(cat ftpenv)
+      #- run: cat ftpenv
       - run: mv cienv .env
-      - run: cat .env
+      #- run: cat .env
       - run: chmod +x ./scripts/db.sh
-      - run: ./scripts/db.sh mysqldev
-      - run: echo $DEV_FTP_HOST
-      - run: git status
-      - name: Install dependencies
-        run: composer install --prefer-dist
-      - run: chmod +x ./scripts/ctar.sh
-      - run: ./scripts/ctar.sh vendor.tar.gz vendor
-      - uses: actions/upload-artifact@v2
-        with:
-          name: vendor
-          path: vendor.tar.gz
-      - run: ls -al vendor
+      - run: ./scripts/db.sh mysql
       - run: which php
       - run: php -v
       - run: php artisan -V
       - run: php artisan key:generate
-      - run: cat .env
+      #- run: cat .env
       - name: migrate to remote db
+        run: php artisan migrate
+      #- name: Cache vendor
+      #  uses: actions/cache@v2
+      #  with:
+      #    path: vendor
+      #    key: ${{ runner.os }}-vendor-${{ hashFiles('**/composer.lock') }}
+      #    restore-keys: ${{ runner.os }}-vendor-
+  unit-test:
+    runs-on: ubuntu-latest
+    needs: [ setup-local-environment ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Get vendor cache
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-vendor-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-vendor-
+      - run: chmod +x ./scripts/unpack.sh
+      - run: ./scripts/unpack.sh ${{ secrets.FILE_GPG_SECRET }} env ciftpenv
+      - run: PROD_FTP_HOST=$(cat ftpenv)
+      #- run: cat ftpenv
+      - run: mv cienv .env
+      - run: cat .env
+      - run: chmod +x ./scripts/db.sh && ./scripts/db.sh mysqlci workflow
+      - run: which php
+      - run: php -v
+      - run: php artisan -V
+      - run: php artisan key:generate
+      #- run: cat .env
+      - name: migrate to local db
         run: php artisan migrate:refresh --seed
+      - name: Run Unit Tests
+        run: ./vendor/bin/phpunit
+  init-deploy:
+    runs-on: ubuntu-latest
+    needs: [ unit-test ]
+    steps:
+      - run: sudo apt-get update
+      - run: sudo apt-get install apache2-utils tar
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Get vendor cache
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-vendor-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-vendor-
       - run: chmod +x ./scripts/ctar.sh
-      - run: ./scripts/ctar.sh vendor.tar.gz vendor
-      - name: copy file via ssh key
+      - name: Pre Deployment Scripts
+        run: ./scripts/ctar.sh vendor.tar.gz vendor
+      - run: ls -al
+      - run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa.key
+      - run: echo "${{ secrets.SSH_PUBLIC_KEY }}" > id_rsa.pub
+      - run: chmod +x ./scripts/unpack.sh
+      - run: ./scripts/unpack.sh ${{ secrets.FILE_GPG_SECRET }} env ciftpenv_dev # extract dev server env and ftp env
+      - run: mv env .env
+      - run: chmod +x ./scripts/db.sh
+      - run: ./scripts/db.sh mysql # set db connection env var
+      - run: which php
+      - run: php -v # php version
+      - run: php artisan -V # framework version
+      - run: php artisan key:generate # generate encryption key
+      - name: Initiate Deployment
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -114,8 +205,17 @@ jobs:
           passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
           port: ${{ secrets.SSH_PORT }}
           source: "app,bootstrap,config,public,resources,routes,src,storage,scripts,vendor.tar.gz,devenv,.htaccess,.htpasswd,artisan,server.php"
-          target: ${{ secrets.DEV_FTP_PATH }}
-      - name: executing remote ssh commands using password
+          target: ${{ secrets.PROD_FTP_PATH }}
+  post-deploy:
+    runs-on: ubuntu-latest
+    needs: [ init-deploy ]
+    steps:
+      - run: echo Deployment done!
+  setup-remote-environment:
+    runs-on: ubuntu-latest
+    needs: [ post-deploy ]
+    steps:
+      - name: Setup Remote Environment After Deployment
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -126,20 +226,16 @@ jobs:
           script: |
             whoami
             pwd
-            cd ${{ secrets.DEV_FTP_PATH }}
+            cd ${{ secrets.PROD_FTP_PATH }}
             pwd
-            echo Print Directory
             ls -al
             chmod +x ./scripts/xtar.sh
             ./scripts/xtar.sh vendor.tar.gz
             chmod +x ./scripts/htpasswd.sh
             ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
-            mv devenv .env
+            mv env .env
             ls -al
             php artisan -V
             php artisan key:generate
-            cat .env
-      - name: Print contents
-        run: ls -al
-      - name: Print if workflow finished successfully
-        run: echo workflow successful!
+            rm -rf scripts
+            rm scripts.tar.gz vendor.tar.gz

@@ -1,7 +1,7 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Development CI/CD
+name: Configuration Workflow
 
 on:
   push:
@@ -184,22 +184,8 @@ jobs:
       - run: echo "${{ secrets.SSH_PUBLIC_KEY }}" > id_rsa.pub
       - run: chmod +x ./scripts/unpack.sh
       - run: ./scripts/unpack.sh ${{ secrets.FILE_GPG_SECRET }} devenv ciftpenv_dev
-      - run: git checkout ./scripts/decrypt.sh
-      - run: git checkout ./scripts/unpack.sh
-      - run: git checkout ./scripts/xtar.sh
-      - run: DEV_FTP_HOST=$(cat ftpenv)
-      #- run: cat ftpenv
-      - run: mv cienv .env
-      #- run: cat .env
-      - run: chmod +x ./scripts/db.sh
-      - run: ./scripts/db.sh mysqlci workflow
-      - run: which php
-      - run: php -v
-      - run: php artisan -V
-      - run: php artisan key:generate
-      #- run: cat .env
-      - name: migrate to local db
-        run: php artisan migrate:refresh --seed
+      - run: ls -al
+      - run: pwd
       #- name: Cache vendor
       #  uses: actions/cache@v2
       #  with:
@@ -280,7 +266,7 @@ jobs:
       - run: echo Deployment done!
   setup-remote-environment:
     runs-on: ubuntu-latest
-    needs: [ init-deploy ]
+    needs: [ post-deploy ]
     steps:
       - name: Setup Remote Environment After Deployment
         uses: appleboy/ssh-action@master
@@ -296,11 +282,5 @@ jobs:
             cd ${{ secrets.DEV_FTP_PATH }}
             pwd
             ls -al
-            chmod +x ./scripts/xtar.sh
-            ./scripts/xtar.sh vendor.tar.gz
-            chmod +x ./scripts/htpasswd.sh
-            ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
-            mv devenv .env
-            ls -al
-            php artisan -V
-            php artisan key:generate
+            cat scptest.txt
+            rm scptest.txt
