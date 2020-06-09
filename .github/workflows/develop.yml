@@ -152,6 +152,12 @@ jobs:
   setup-local-environment:
     runs-on: ubuntu-latest
     needs: [ install ]
+    env:
+      dbhost: 'localhost'
+      dbname: 'tissueci_db'
+      dbport: 3800
+      dbuser: 'root'
+      dbpassword: 'root'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -179,13 +185,23 @@ jobs:
       - run: mv cienv .env
       #- run: cat .env
       - run: chmod +x ./scripts/db.sh
-      - run: ./scripts/db.sh mysqldev
+      - run: ./scripts/db.sh mysqlci
+      - uses: mirromutth/mysql-action@v1.1
+        with:
+          host port: ${{ env.dbhost }} # Optional, default value is 3306. The port of host
+          #character set server: 'utf8' # Optional, default value is 'utf8mb4'. The '--character-set-server' option for mysqld
+          #collation server: 'utf8_general_ci' # Optional, default value is 'utf8mb4_general_ci'. The '--collation-server' option for mysqld
+          #mysql version: '8.0' # Optional, default value is "latest". The version of the MySQL
+          #mysql database: 'tissueappdb' # Optional, default value is "test". The specified database which will be create
+          mysql root password: ${{ env.dbpassword }} # Required if "mysql user" is empty, default is empty. The root superuser password
+          mysql user: ${{ env.dbuser }} # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
+          mysql password: ${{ env.dbpassword }} # Required if "mysql user" exists. The password for the "mysql user"
       - run: which php
       - run: php -v
       - run: php artisan -V
       - run: php artisan key:generate
       #- run: cat .env
-      - name: migrate to remote db
+      - name: migrate to local db
         run: php artisan migrate:refresh --seed
       - name: Cache vendor
         uses: actions/cache@v2
@@ -206,6 +222,23 @@ jobs:
           key: ${{ runner.os }}-vendor-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-vendor-
       - run: composer install --prefer-dist
+      - uses: mirromutth/mysql-action@v1.1
+        with:
+          host port: 3800 # Optional, default value is 3306. The port of host
+          #character set server: 'utf8' # Optional, default value is 'utf8mb4'. The '--character-set-server' option for mysqld
+          #collation server: 'utf8_general_ci' # Optional, default value is 'utf8mb4_general_ci'. The '--collation-server' option for mysqld
+          #mysql version: '8.0' # Optional, default value is "latest". The version of the MySQL
+          #mysql database: 'tissueappdb' # Optional, default value is "test". The specified database which will be create
+          mysql root password: 'root' # Required if "mysql user" is empty, default is empty. The root superuser password
+          mysql user: 'root' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
+          mysql password: 'root' # Required if "mysql user" exists. The password for the "mysql user"
+      - run: which php
+      - run: php -v
+      - run: php artisan -V
+      - run: php artisan key:generate
+      #- run: cat .env
+      - name: migrate to local db
+        run: php artisan migrate:refresh --seed
       - name: Run Unit Tests
         run: ./vendor/bin/phpunit
   init-deploy:
@@ -257,22 +290,22 @@ jobs:
       - name: Setup Remote Environment After Deployment
         uses: appleboy/ssh-action@master
         with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
-        port: ${{ secrets.SSH_PORT }}
-        script: |
-          whoami
-          pwd
-          cd ${{ secrets.DEV_FTP_PATH }}
-          pwd
-          ls -al
-          chmod +x ./scripts/xtar.sh
-          ./scripts/xtar.sh vendor.tar.gz
-          chmod +x ./scripts/htpasswd.sh
-          ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
-          mv devenv .env
-          ls -al
-          php artisan -V
-          php artisan key:generate
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            whoami
+            pwd
+            cd ${{ secrets.DEV_FTP_PATH }}
+            pwd
+            ls -al
+            chmod +x ./scripts/xtar.sh
+            ./scripts/xtar.sh vendor.tar.gz
+            chmod +x ./scripts/htpasswd.sh
+            ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
+            mv devenv .env
+            ls -al
+            php artisan -V
+            php artisan key:generate

@@ -252,22 +252,22 @@ jobs:
       - name: Setup Remote Environment After Deployment
         uses: appleboy/ssh-action@master
         with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
-        port: ${{ secrets.SSH_PORT }}
-        script: |
-          whoami
-          pwd
-          cd ${{ secrets.DEV_FTP_PATH }}
-          pwd
-          ls -al
-          chmod +x ./scripts/xtar.sh
-          ./scripts/xtar.sh vendor.tar.gz
-          chmod +x ./scripts/htpasswd.sh
-          ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
-          mv devenv .env
-          ls -al
-          php artisan -V
-          php artisan key:generate
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            whoami
+            pwd
+            cd ${{ secrets.DEV_FTP_PATH }}
+            pwd
+            ls -al
+            chmod +x ./scripts/xtar.sh
+            ./scripts/xtar.sh vendor.tar.gz
+            chmod +x ./scripts/htpasswd.sh
+            ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
+            mv devenv .env
+            ls -al
+            php artisan -V
+            php artisan key:generate
