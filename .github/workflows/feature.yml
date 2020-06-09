@@ -172,7 +172,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
           port: ${{ secrets.SSH_PORT }}
-          source: "app,bootstrap,config,public,resources,routes,src,storage,vendor.tar.gz,.env,.htpasswd,scripts.tar.gz"
+          source: "app,bootstrap,config,public,resources,routes,src,storage,vendor.tar.gz,.env,.htaccess,.htpasswd,scripts.tar.gz,artisan,server.php"
           target: ${{ secrets.DEV_FTP_PATH }}
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
@@ -187,11 +187,13 @@ jobs:
             pwd
             echo Print Directory
             ls -al
-            chmod +x ./scripts/xtar.sh && ./scripts/xtar.sh vendor.tar.gz && echo Print Directory && ls -al
+            cd ${{ secrets.DEV_FTP_PATH }} && chmod +x ./scripts/xtar.sh
+            cd ${{ secrets.DEV_FTP_PATH }} && ./scripts/xtar.sh vendor.tar.gz && echo Print Directory && ls -al
             echo Print Directory
+            pwd
             ls -al
-            php artisan -V
-            php artisan key:generate
+            cd ${{ secrets.DEV_FTP_PATH }} && php artisan -V
+            cd ${{ secrets.DEV_FTP_PATH }} && php artisan key:generate
       - name: Print contents
         run: ls -al
       - name: Print if workflow finished successfully
