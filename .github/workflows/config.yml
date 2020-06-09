@@ -200,12 +200,12 @@ jobs:
         #  target: ${{ secrets.DEV_FTP_PATH }}
   post-deploy:
     runs-on: ubuntu-latest
-    needs: [ deploy ]
+    needs: [ init-deploy ]
     steps:
       - run: echo Deployment done!
   setup-remote-environment:
     runs-on: ubuntu-latest
-    needs: [ deploy ]
+    needs: [ init-deploy ]
     steps:
       - name: Setup Remote Environment After Deployment
         uses: appleboy/ssh-action@master
