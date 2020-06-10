@@ -1,26 +1,13 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Feature Workflow
+name: Test CI/CD
 
 on:
   push:
-    branches: [ feature/* ]
-    paths:
-      - 'app/**'
-      - 'config/**'
-      - 'database/**'
-      - 'public/**'
-      - 'resources/**'
-      - 'routes/**'
-      - 'src/**'
-      - 'storage/**'
-      - 'tests/**'
-      - '!.github/**'
-      - '!scripts/**'
-      - '!etc/**'
-        #pull_request:
-        #  branches: [ develop ]
+    branches:
+      - 'releases/**'
+      - 'hotfix/**'
 
 jobs:
   install:
@@ -84,75 +71,9 @@ jobs:
           path: vendor
           key: ${{ runner.os }}-vendor-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-vendor-
-      #- name: Print contents
-      #  run: ls -al
-      #- name: Print current working dir
-      #  run: pwd
-      #- run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa.key
-      #- run: echo "${{ secrets.SSH_PUBLIC_KEY }}" > id_rsa.pub
-      #- run: chmod +x ./scripts/unpack.sh
-      #- run: ./scripts/unpack.sh ${{ secrets.FILE_GPG_SECRET }} devenv ciftpenv_dev
-      #- run: git checkout ./scripts/decrypt.sh
-      #- run: git checkout ./scripts/unpack.sh
-      #- run: git checkout ./scripts/xtar.sh
-      #- run: DEV_FTP_HOST=$(cat ftpenv)
-      #- run: cat ftpenv
-      #- run: mv cienv .env
-      #- run: cat .env
-      #- run: chmod +x ./scripts/db.sh
-      #- run: ./scripts/db.sh mysqldev
-      #- run: echo $DEV_FTP_HOST
-      #- run: git status
-      #- name: Install dependencies
-      #  run: composer install --prefer-dist
-      #- run: ls -al vendor
-      #- run: which php
-      #- run: php -v
-      #- run: php artisan -V
-      #- run: php artisan key:generate
-      #- run: cat .env
-      #- name: migrate to remote db
-      #  run: php artisan migrate:refresh --seed
-      #- run: chmod +x ./scripts/ctar.sh
-      #- run: ./scripts/ctar.sh vendor.tar.gz vendor
-      #- name: copy file via ssh key
-      #  uses: appleboy/scp-action@master
-      #  with:
-      #    host: ${{ secrets.SSH_HOST }}
-      #    username: ${{ secrets.SSH_USERNAME }}
-      #    key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #    passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
-      #    port: ${{ secrets.SSH_PORT }}
-      #    source: "app,bootstrap,config,public,resources,routes,src,storage,scripts,vendor.tar.gz,devenv,.htaccess,.htpasswd,artisan,server.php"
-      #    target: ${{ secrets.DEV_FTP_PATH }}
-      #- name: executing remote ssh commands using password
-      #  uses: appleboy/ssh-action@master
-      #  with:
-      #    host: ${{ secrets.SSH_HOST }}
-      #    username: ${{ secrets.SSH_USERNAME }}
-      #    key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #    passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
-      #    port: ${{ secrets.SSH_PORT }}
-      #    script: |
-      #      whoami
-      #      pwd
-      #      cd ${{ secrets.DEV_FTP_PATH }}
-      #      pwd
-      #      echo Print Directory
-      #      ls -al
-      #      chmod +x ./scripts/xtar.sh
-      #      ./scripts/xtar.sh vendor.tar.gz
-      #      chmod +x ./scripts/htpasswd.sh
-      #      ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
-      #      mv devenv .env
-      #      ls -al
-      #      php artisan -V
-      #      php artisan key:generate
-      #      cat .env
       - name: Print contents
         run: ls -al
-      - name: Print if workflow finished successfully
-        run: echo workflow successful!
+      - run: echo Job finished!
   setup-local-environment:
     runs-on: ubuntu-latest
     needs: [ install ]
@@ -191,33 +112,23 @@ jobs:
       - run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa.key
       - run: echo "${{ secrets.SSH_PUBLIC_KEY }}" > id_rsa.pub
       - run: chmod +x ./scripts/unpack.sh
-      - run: ./scripts/unpack.sh ${{ secrets.FILE_GPG_SECRET }} devenv ciftpenv_dev
+      - run: ./scripts/unpack.sh ${{ secrets.FILE_GPG_SECRET }} env ciftpenv_demo
       - run: git checkout ./scripts/decrypt.sh
       - run: git checkout ./scripts/unpack.sh
       - run: git checkout ./scripts/xtar.sh
-      - run: DEV_FTP_HOST=$(cat ftpenv)
+      - run: PROD_FTP_HOST=$(cat ftpenv)
       #- run: cat ftpenv
-      - run: mv cienv .env
+      - run: mv demoenv .env
       #- run: cat .env
       - run: chmod +x ./scripts/db.sh
-      - run: ./scripts/db.sh mysqldev
-      - uses: mirromutth/mysql-action@v1.1
-        with:
-          host port: ${{ env.dbhost }} # Optional, default value is 3306. The port of host
-          #character set server: 'utf8' # Optional, default value is 'utf8mb4'. The '--character-set-server' option for mysqld
-          #collation server: 'utf8_general_ci' # Optional, default value is 'utf8mb4_general_ci'. The '--collation-server' option for mysqld
-          #mysql version: '8.0' # Optional, default value is "latest". The version of the MySQL
-          #mysql database: 'tissueappdb' # Optional, default value is "test". The specified database which will be create
-          mysql root password: ${{ env.dbpassword }} # Required if "mysql user" is empty, default is empty. The root superuser password
-          mysql user: ${{ env.dbuser }} # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
-          mysql password: ${{ env.dbpassword }} # Required if "mysql user" exists. The password for the "mysql user"
+      - run: ./scripts/db.sh mysqldemo
       - run: which php
       - run: php -v
       - run: php artisan -V
       - run: php artisan key:generate
       #- run: cat .env
       - name: migrate to remote db
-        run: php artisan migrate:refresh --seed
+        run: php artisan migrate
       #- name: Cache vendor
       #  uses: actions/cache@v2
       #  with:
@@ -237,8 +148,8 @@ jobs:
           key: ${{ runner.os }}-vendor-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-vendor-
       - run: chmod +x ./scripts/unpack.sh
-      - run: ./scripts/unpack.sh ${{ secrets.FILE_GPG_SECRET }} devenv ciftpenv_dev
-      - run: DEV_FTP_HOST=$(cat ftpenv)
+      - run: ./scripts/unpack.sh ${{ secrets.FILE_GPG_SECRET }} demoenv ciftpenv_demo
+      - run: PROD_FTP_HOST=$(cat ftpenv)
       #- run: cat ftpenv
       - run: mv cienv .env
       - run: cat .env
@@ -252,3 +163,75 @@ jobs:
         run: php artisan migrate:refresh --seed
       - name: Run Unit Tests
         run: ./vendor/bin/phpunit
+  init-deploy:
+    runs-on: ubuntu-latest
+    needs: [ unit-test ]
+    steps:
+      - run: sudo apt-get update
+      - run: sudo apt-get install apache2-utils tar
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Get vendor cache
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-vendor-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-vendor-
+      - run: chmod +x ./scripts/ctar.sh
+      - name: Pre Deployment Scripts
+        run: ./scripts/ctar.sh vendor.tar.gz vendor
+      - run: ls -al
+      - run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa.key
+      - run: echo "${{ secrets.SSH_PUBLIC_KEY }}" > id_rsa.pub
+      - run: chmod +x ./scripts/unpack.sh
+      - run: ./scripts/unpack.sh ${{ secrets.FILE_GPG_SECRET }} demoenv ciftpenv_demo # extract server env and ftp env
+      - run: mv demoenv .env
+      - run: chmod +x ./scripts/db.sh
+      - run: ./scripts/db.sh mysqldemo # set db connection
+      - run: which php
+      - run: php -v # php version
+      - run: php artisan -V # framework version
+      - run: php artisan key:generate # generate encryption key
+      - name: Initiate Deployment
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "app,bootstrap,config,public,resources,routes,src,storage,scripts,vendor.tar.gz,devenv,.htaccess,.htpasswd,artisan,server.php"
+          target: ${{ secrets.DEMO_FTP_PATH }}
+  post-deploy:
+    runs-on: ubuntu-latest
+    needs: [ init-deploy ]
+    steps:
+      - run: echo Deployment done!
+  setup-remote-environment:
+    runs-on: ubuntu-latest
+    needs: [ post-deploy ]
+    steps:
+      - name: Setup Remote Environment After Deployment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            whoami
+            pwd
+            cd ${{ secrets.DEMO_FTP_PATH }}
+            pwd
+            ls -al
+            chmod +x ./scripts/xtar.sh
+            ./scripts/xtar.sh vendor.tar.gz
+            chmod +x ./scripts/htpasswd.sh
+            ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
+            mv demoenv .env
+            ls -al
+            php artisan -V
+            php artisan key:generate
+            rm -rf scripts
+            rm scripts.tar.gz vendor.tar.gz
