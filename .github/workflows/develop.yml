@@ -38,6 +38,8 @@ jobs:
       ftpuser: u753715810
       ftppass: ${{ secrets.FTP_PASS }}
       ftproot: domains/tissueapp.xyz/public_html/api-dev
+    outputs:
+      cache-dir: ${{ steps.cache-env.outputs.dir }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -173,7 +175,7 @@ jobs:
       - name: Get dependencies cache
         uses: actions/cache@v2
         with:
-          path: ${{ jobs.install.steps.composer-cache.outputs.dir }}
+          path: ${{ needs.install.outputs.cache-dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
       #- run: composer install --prefer-dist
