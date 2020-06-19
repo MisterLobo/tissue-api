@@ -4,3 +4,10 @@ Homestead.yaml
 Homestead.json
 .env
 .idea
+cienv
+ciftpenv
+ciftpenv_demo
+ciftpenv_dev
+demoenv
+devenv
+env

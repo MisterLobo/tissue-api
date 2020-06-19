@@ -15,11 +15,11 @@ return [
     |
     */
 
-    'paths' => ['api/*', '*'],
+    'paths' => ['api/*', 'sociallogin/*', 'social/getuser/*', 'login', 'sanctum/csrf-cookie', 'upload', 'user/*'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://dev.tissueapp.xyz', 'https://demo.tissueapp.xyz', 'https://www.tissueapp.xyz'],
+    'allowed_origins' => ['*', 'https://dev.tissueapp.xyz', 'https://demo.tissueapp.xyz', 'https://www.tissueapp.xyz'],
 
     'allowed_origins_patterns' => ['*'],
 
@@ -29,6 +29,6 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => false,
+    'supports_credentials' => true,
 
 ];

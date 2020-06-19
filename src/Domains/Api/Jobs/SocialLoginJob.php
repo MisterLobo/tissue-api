@@ -2,18 +2,20 @@
 
 namespace App\Domains\Api\Jobs;
 
+use Laravel\Socialite\Facades\Socialite;
 use Lucid\Foundation\Job;
 
 class SocialLoginJob extends Job
 {
+    private $provider;
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param string $provider
      */
-    public function __construct()
+    public function __construct($provider)
     {
-        //
+        $this->provider = $provider;
     }
 
     /**
@@ -23,6 +25,6 @@ class SocialLoginJob extends Job
      */
     public function handle()
     {
-        //
+        return Socialite::driver($this->provider)->stateless()->user();
     }
 }
