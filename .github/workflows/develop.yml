@@ -172,10 +172,10 @@ jobs:
       - name: Get composer cache directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - name: Get dependencies cache
+      - name: Cache dependencies
         uses: actions/cache@v2
         with:
-          path: ${{ needs.install.outputs.cache-dir }}
+          path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
       #- run: composer install --prefer-dist
