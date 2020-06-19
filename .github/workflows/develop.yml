@@ -318,8 +318,6 @@ jobs:
             ls -al
             chmod +x ./scripts/xtar.sh
             ./scripts/xtar.sh vendor.tar.gz
-            chmod +x ./scripts/htpasswd.sh
-            ./scripts/htpasswd.sh ${{ secrets.AUTH_USER }} ${{ secrets.AUTH_PASS }}
             mv devenv .env
             ls -al
             php artisan -V
