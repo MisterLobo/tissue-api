@@ -6,19 +6,19 @@ name: Development Workflow
 on:
   push:
     branches: [ develop ]
-    paths:
-      - 'app/**'
-      - 'config/**'
-      - 'database/**'
-      - 'public/**'
-      - 'resources/**'
-      - 'routes/**'
-      - 'src/**'
-      - 'storage/**'
-      - 'tests/**'
-      - '!.github/**'
-      - '!scripts/**'
-      - '!etc/**'
+    #paths:
+    #  - 'app/**'
+    #  - 'config/**'
+    #  - 'database/**'
+    #  - 'public/**'
+    #  - 'resources/**'
+    #  - 'routes/**'
+    #  - 'src/**'
+    #  - 'storage/**'
+    #  - 'tests/**'
+    #  - '!.github/**'
+    #  - '!scripts/**'
+    #  - '!etc/**'
   #pull_request:
   #  branches: [ develop ]
 
