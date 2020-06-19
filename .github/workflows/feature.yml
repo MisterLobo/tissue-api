@@ -6,16 +6,16 @@ name: Feature Workflow
 on:
   push:
     branches: [ feature/* ]
-    paths:
-      - 'app/**'
-      - 'config/**'
-      - 'database/**'
-      - 'public/**'
-      - 'resources/**'
-      - 'routes/**'
-      - 'src/**'
-      - 'storage/**'
-      - 'tests/**'
+    #paths:
+      #- 'app/**'
+      #- 'config/**'
+      #- 'database/**'
+      #- 'public/**'
+      #- 'resources/**'
+      #- 'routes/**'
+      #- 'src/**'
+      #- 'storage/**'
+      #- 'tests/**'
       #- '!.github/**'
       #- '!scripts/**'
       #- '!etc/**'
