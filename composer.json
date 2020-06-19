@@ -8,11 +8,16 @@
         "php": "^7.3",
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^1.0",
+        "graham-campbell/github": "^9.2",
+        "graham-campbell/gitlab": "^3.1",
         "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "^7.0",
+        "laravel/sanctum": "^2.4",
         "laravel/socialite": "^4.4",
         "laravel/tinker": "^2.0",
-        "lucid-arch/laravel-foundation": "^7.0"
+        "lucid-arch/laravel-foundation": "^7.0",
+        "php-http/guzzle6-adapter": "^2.0",
+        "ext-json": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
