@@ -323,4 +323,4 @@ jobs:
             php artisan -V
             php artisan key:generate
             rm -rf scripts
-            rm scripts.tar.gz vendor.tar.gz
+            rm vendor.tar.gz
