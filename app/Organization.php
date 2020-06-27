@@ -8,6 +8,6 @@ class Organization extends Model
 {
     public function members()
     {
-        return $this->morphedByMany('\Framework\User', 'org_members');
+        return $this->belongsToMany('\Framework\User', 'org_members', 'org_id', 'member_id');
     }
 }

@@ -19,8 +19,9 @@ class CreateProjectsTable extends Migration
             $table->enum('owner_type', ['user', 'org']);
             $table->string('title');
             $table->string('slug');
-            $table->string('description')->nullable();
+            $table->string('description', '5000')->nullable();
             $table->string('website')->nullable();
+            $table->enum('type', ['local', 'import'])->default('local');
             $table->boolean('is_public')->default(true);
             $table->timestamps();
 

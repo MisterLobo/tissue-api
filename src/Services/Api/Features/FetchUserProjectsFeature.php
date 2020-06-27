@@ -10,14 +10,12 @@ use Illuminate\Support\Facades\Auth;
 use Lucid\Foundation\Feature;
 use Illuminate\Http\Request;
 
-class FetchProjectsFeature extends Feature
+class FetchUserProjectsFeature extends Feature
 {
     public function handle(Request $request)
     {
-        $o = $request->owner;
-        $owner = $this->run(new GetUserJob($o, $ret));
+        $owner = Auth::user();
         $p = $this->run(new FetchProjectsJob($owner, $owner->id, $ret));
-        $p['owner'] = $owner;
-        return $p === false ? $this->run(new RespondWithJsonErrorJob($ret, 403)) : $this->run(new RespondWithJsonJob($p));
+        return $p === false ? $this->run(new RespondWithJsonErrorJob($ret, 403, 403)) : $this->run(new RespondWithJsonJob($p));
     }
 }

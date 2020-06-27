@@ -28,6 +28,16 @@ class Project extends Model
 
     public function owner()
     {
-        return $this->belongsTo('\Framework\User', 'owner_id', 'social_id');
+        return $this->belongsTo('\Framework\User', 'owner_id');
+    }
+
+    public function owners()
+    {
+        return $this->belongsToMany('\Framework\User', 'proj_members', 'project_id', 'member_id')->wherePivot('role', '=', 'owner');
+    }
+
+    public function members()
+    {
+        return $this->belongsToMany('\Framework\User', 'proj_members', 'project_id', 'member_id');
     }
 }

@@ -20,6 +20,6 @@ class Comment extends Model
 
     public function author()
     {
-        return $this->belongsTo('\Framework\User', 'author_id', 'social_id');
+        return $this->belongsTo('\Framework\User', 'author_id');
     }
 }

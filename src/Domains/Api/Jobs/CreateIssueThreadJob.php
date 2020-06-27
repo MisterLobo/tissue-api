@@ -21,7 +21,7 @@ class CreateIssueThreadJob extends Job
     public function __construct($iss, &$ret)
     {
         $this->iss = $iss;
-        $this->m_return = $ret;
+        $this->m_return = &$ret;
     }
 
     /**
@@ -34,19 +34,17 @@ class CreateIssueThreadJob extends Job
         try {
             $issue = $this->iss;
             $author_id = $issue->author_id;
-            $user = User::firstWhere('social_id', $author_id);
-            $thread = IssueThread::create(['issue_id' => $issue->id, 'project_id' => $issue->project_id, 'author_id' => $author_id, 'meta' => $issue->meta]);
+            $thread = IssueThread::create(['issue_id' => $issue->id, 'project_id' => $issue->project_id, 'author_id' => $author_id, 'meta' => json_encode($issue->meta)]);
             $thread->author;
-            $meta = json_decode($issue->meta);
+            $meta = $issue->meta;
             $thread->labels = $meta->labels;
-            $assignees = $meta->assignees !== null ? User::select('users.*')->whereIn('social_id', $meta->participants)->get()->toArray() : [];
+            $assignees = $meta->assignees !== null ? User::select('users.*')->whereIn('id', $meta->assignees)->get()->toArray() : [];
             $thread->assignees = $assignees;
-            $parts = $issue->participants !== null ? User::select('users.*')->whereIn('social_id', $meta->participants)->get()->toArray() : [];
+            $parts = $meta->participants !== null ? User::select('users.*')->whereIn('id', $meta->participants)->get()->toArray() : [];
             $thread->participants = $parts;
             return $thread;
         } catch (\Exception $e) {
-            if (env('APP_ENV') !== 'development' && env('APP_ENV') !== 'local') $this->m_return = ['error' => $e->getMessage()];
-            else  $this->m_return = ['error' => 'Error in thread', 'trace' => $e];
+            $this->m_return = env('APP_ENV') !== 'production' ? ['error' => $e->getMessage(), 'trace' => $e->getTrace()] : ['error' => 'An error has occurred'];
             return false;
         }
     }
