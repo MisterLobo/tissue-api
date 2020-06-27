@@ -40,12 +40,12 @@ class User extends Authenticatable
 
     public function projects()
     {
-        return $this->hasMany('\Framework\Project', 'owner_id', 'social_id');
+        return $this->belongsToMany('\Framework\Project', 'proj_members', 'member_id', 'project_id')->wherePivot('role', '=', 'owner');
     }
 
     public function threads()
     {
-        return $this->hasMany('\Framework\IssueThread', 'author_id', 'social_id');
+        return $this->hasMany('\Framework\IssueThread', 'author_id', 'id');
     }
 
     public function issues()
@@ -55,6 +55,6 @@ class User extends Authenticatable
 
     public function orgs()
     {
-        return $this->morphToMany('\Framework\Organization', 'org_members', 'org_members', 'org_id', 'member_id');
+        return $this->belongsToMany('\Framework\Organization', 'org_members', 'member_id', 'org_id');
     }
 }
