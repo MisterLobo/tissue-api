@@ -2,15 +2,10 @@
 
 namespace App\Services\Api\Http\Controllers;
 
-use App\Services\Api\Features\FetchProjectsFeature;
-use App\Services\Api\Features\FetchUserProjectsFeature;
-use App\Services\Api\Features\MakeUserProjectFeature;
-use Framework\Project;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Lucid\Foundation\Http\Controller;
 
-class ProjectController extends Controller
+class ThreadHistoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,60 +22,20 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function list()
-    {
-        //
-    }
-
-    /**
-     * Get all projects for authenticated user
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function getUserProjects()
-    {
-        return $this->serve(FetchUserProjectsFeature::class);
-    }
-
-    /**
-     * Get all user projects
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function getProjects()
-    {
-        return $this->serve(FetchProjectsFeature::class);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function importUserProjects()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
     }
 
     /**
-     * Create a project for the authenticated user
+     * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        return $this->serve(MakeUserProjectFeature::class);
+        //
     }
 
     /**
