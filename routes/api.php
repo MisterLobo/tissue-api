@@ -77,4 +77,4 @@ Route::middleware('auth:sanctum')->post('/user/projects/import', '\App\Services\
  */
 Route::middleware('auth:sanctum')->get('/users', '')->name('get-all-users');
 Route::middleware('auth:sanctum')->get('/users/{username}', '')->name('get-user');
-Route::middleware('auth:sanctum')->get('/users/{username}/projects', '')->name('get-user');
+Route::middleware('auth:sanctum')->get('/users/{username}/projects', '\App\Services\Api\Http\Controllers\ProjectController@getProjects')->name('get-user');
