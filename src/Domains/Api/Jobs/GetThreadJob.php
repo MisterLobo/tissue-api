@@ -10,24 +10,20 @@ use Lucid\Foundation\Job;
 
 class GetThreadJob extends Job
 {
-    private $id, $i, $p, $a, $o, $ret;
+    private $i, $p, $o, $ret;
 
     /**
      * Create a new job instance.
      *
-     * @param int $id
      * @param Issue|null $issue
      * @param Project|null $project
-     * @param User|null $author
      * @param User|null $owner
      * @param $ret
      */
-    public function __construct($id, $issue = null, $project = null, $author = null, $owner = null, &$ret = null)
+    public function __construct($issue, $project, $owner, &$ret = null)
     {
-        $this->id = $id;
         $this->i = $issue;
         $this->p = $project;
-        $this->a = $author;
         $this->o = $owner;
         $this->ret = &$ret;
     }
@@ -40,16 +36,22 @@ class GetThreadJob extends Job
     public function handle()
     {
         try {
-            $id = $this->id;
-            $thread = IssueThread::find($id);
+            $issue = $this->i;
+            $project = $this->p;
+            $owner = $this->o;
+            $thread = IssueThread::where('project_id', $project->id)->where('author_id', $owner->id)->where('issue_id', $issue->id)->first();
             $thread->comments;
+            $thread->issue;
+            $thread->labels = $issue->meta->labels;
+            $thread->assignees = User::select('users.*')->whereIn('id', $issue->meta->assignees)->get()->toArray();
+            $thread->participants = User::select('users.*')->whereIn('id', $issue->meta->participants)->get()->toArray();
             foreach ($thread->comments as $comment) {
                 $comment->author;
             }
             //var_dump($thread);
             return $thread;
         } catch (\Exception $e) {
-            $this->ret = ['error' => 'Error in thread'];
+            $this->ret = env('APP_ENV') !== 'production' ? ['error' => $e->getMessage(), 'trace' => $e->getTrace()] : ['error' => 'An error has occurred'];
             return false;
         }
     }

@@ -58,8 +58,7 @@ class CreateCommentJob extends Job
             $comment->author;
             return $comment;
         } catch (Exception $e) {
-            if (env('APP_ENV') !== 'development' && env('APP_ENV') !== 'local') $this->m_return = ['error' => $e->getMessage()];
-            else  $this->m_return = ['error' => 'Error in comment', 'trace' => $e];
+            $this->m_return = env('APP_ENV') !== 'production' ? ['error' => $e->getMessage(), 'trace' => $e->getTrace()] : ['error' => 'An error has occurred'];
             return false;
         }
     }

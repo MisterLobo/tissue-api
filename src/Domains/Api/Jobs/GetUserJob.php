@@ -12,7 +12,7 @@ class GetUserJob extends Job
     /**
      * Create a new job instance.
      *
-     * @param $u
+     * @param string|int $u
      * @param $ret
      * @param bool $loadall
      */
