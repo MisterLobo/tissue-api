@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOrgMembersTable extends Migration
+class CreateProjMembersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,13 @@ class CreateOrgMembersTable extends Migration
      */
     public function up()
     {
-        Schema::create('org_members', function (Blueprint $table) {
+        Schema::create('proj_members', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('org_id');
+            $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('member_id');
+            $table->enum('member_type', ['owner', 'member']);
             $table->enum('role', ['owner', 'maintainer', 'developer', 'editor']);
             $table->timestamps();
-
-            //$table->foreignId('org_id')->references('id')->on('organizations');
-            //$table->foreignId('member_id')->references('id')->on('users');
         });
     }
 
@@ -32,6 +30,6 @@ class CreateOrgMembersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('org_members');
+        Schema::dropIfExists('proj_members');
     }
 }
