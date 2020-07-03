@@ -15,7 +15,7 @@ class FetchUserProjectsFeature extends Feature
     public function handle(Request $request)
     {
         $owner = Auth::user();
-        $p = $this->run(new FetchProjectsJob($owner, $owner->id, $ret));
+        $p = $this->run(new FetchProjectsJob($owner, $owner->id, $owner, $ret));
         return $p === false ? $this->run(new RespondWithJsonErrorJob($ret, 403, 403)) : $this->run(new RespondWithJsonJob($p));
     }
 }
