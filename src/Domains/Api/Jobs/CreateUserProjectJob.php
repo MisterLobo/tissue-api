@@ -39,7 +39,7 @@ class CreateUserProjectJob extends Job
         {
             $proj = Project::Create(['owner_id' => $this->user->id, 'slug' => $this->project['slug'], 'title' => $project['title'], 'description' => $project['description'], 'website' => $project['website'], 'is_public' => $project['is_public'], 'owner_type' => 'user']);
             $proj->owner;
-            $proj->members;
+            $proj->owners;
             return $proj;
         } else {
             $this->ret = 'Project already exists';
