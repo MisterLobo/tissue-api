@@ -4,6 +4,7 @@ namespace App\Services\Api\Features;
 
 use App\Domains\Api\Jobs\AddProjectMemberJob;
 use App\Domains\Api\Jobs\CreateUserProjectJob;
+use App\Domains\Api\Jobs\GetProjectByIdJob;
 use App\Domains\Api\Jobs\NewThreadActivityJob;
 use App\Domains\Http\Jobs\RespondWithJsonErrorJob;
 use App\Domains\Http\Jobs\RespondWithJsonJob;
@@ -22,7 +23,9 @@ class MakeUserProjectFeature extends Feature
         if ($project === false) return $this->run(new RespondWithJsonErrorJob($ret, 403, 403));
         $meta = ['member_type' => 'owner', 'role' => 'owner'];
         $ok = $this->run(new AddProjectMemberJob($project, $user, $meta, $ret));
-        $proj = ['m' => 'OK', 's' => 200, 'p' => $project];
+        $proj = $this->run(new GetProjectByIdJob($project->id, $ret));
+        if ($proj === false) return $this->run(new RespondWithJsonErrorJob($ret, 403, 403));
+        $proj = ['m' => 'OK', 's' => 200, 'p' => $proj];
         return $ok === false ? $this->run(new RespondWithJsonErrorJob($ret, 403, 403)) : $this->run(new RespondWithJsonJob($proj, 201));
     }
 }
